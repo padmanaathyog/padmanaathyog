@@ -1,0 +1,171 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 30 30% 98%;
+    --foreground: 20 10% 20%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 20 10% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 10% 20%;
+
+    --primary: 20 100% 49%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 30 80% 90%;
+    --secondary-foreground: 20 10% 20%;
+
+    --muted: 30 30% 96%;
+    --muted-foreground: 20 10% 40%;
+
+    --accent: 30 80% 90%;
+    --accent-foreground: 20 10% 20%;
+
+    --destructive: 0 65% 65%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 30 30% 90%;
+    --input: 30 30% 90%;
+    --ring: 20 100% 49%;
+
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    background-image: url("/sanskrit-bg.svg");
+    background-repeat: repeat;
+    background-size: 500px;
+    background-opacity: 0.05;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-sans;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl font-bold tracking-tight;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl font-semibold;
+  }
+
+  h4 {
+    @apply text-xl md:text-2xl font-semibold;
+  }
+
+  p {
+    @apply leading-relaxed;
+  }
+
+  .container {
+    @apply px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-sm;
+  }
+
+  .glass-card {
+    @apply glass rounded-2xl transition-all duration-300 hover:shadow-md;
+  }
+
+  .glassmorphic {
+    @apply bg-white/30 backdrop-blur-lg border border-white/30 shadow-sm rounded-xl;
+  }
+
+  .section {
+    @apply py-12 md:py-20;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-lg bg-yoga-burnt text-white px-5 py-2.5 text-base font-medium shadow-sm hover:bg-yoga-lightorange transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-yoga-burnt focus:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-lg bg-yoga-sandbrown text-gray-900 px-5 py-2.5 text-base font-medium shadow-sm hover:bg-opacity-90 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-yoga-sandbrown focus:ring-offset-2;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center rounded-lg border border-yoga-burnt bg-transparent text-yoga-burnt px-5 py-2.5 text-base font-medium hover:bg-yoga-burnt hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-yoga-burnt focus:ring-offset-2;
+  }
+
+  .page-padding {
+    @apply pt-24 pb-12;
+  }
+
+  .sanatan-border {
+    @apply border-2 border-yoga-burnt/50 rounded-lg p-6 relative;
+    background-image: linear-gradient(to right, rgba(247, 87, 1, 0.05), rgba(247, 87, 1, 0.02));
+  }
+
+  .sanatan-card {
+    @apply bg-white/80 backdrop-blur-md border-2 border-yoga-burnt/30 rounded-lg p-6 shadow-md;
+    background-image: linear-gradient(to bottom, rgba(247, 87, 1, 0.02), rgba(247, 87, 1, 0.05));
+  }
+
+  .sanskrit-quote {
+    @apply font-serif text-xl md:text-2xl text-yoga-burnt italic my-4 text-center;
+  }
+
+  .sanskrit-translation {
+    @apply text-sm md:text-base text-yoga-brown/80 mb-6 text-center;
+  }
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Parallax Base */
+.parallax {
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* Content Protection */
+img,
+video {
+  pointer-events: none;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+
+@media print {
+  body {
+    display: none;
+  }
+}
+
