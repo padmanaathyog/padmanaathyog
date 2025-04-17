@@ -51,6 +51,7 @@
     background-repeat: repeat;
     background-size: 500px;
     background-opacity: 0.05;
+    font-family: "Poppins", "Lato", sans-serif;
   }
 
   h1,
@@ -59,27 +60,29 @@
   h4,
   h5,
   h6 {
-    @apply font-sans;
+    font-family: "Poppins", "Lato", sans-serif;
+    letter-spacing: -0.025em;
   }
 
   h1 {
-    @apply text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight;
+    @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight;
   }
 
   h2 {
-    @apply text-3xl md:text-4xl font-bold tracking-tight;
+    @apply text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight;
   }
 
   h3 {
-    @apply text-2xl md:text-3xl font-semibold;
+    @apply text-xl sm:text-2xl md:text-3xl font-semibold;
   }
 
   h4 {
-    @apply text-xl md:text-2xl font-semibold;
+    @apply text-lg sm:text-xl md:text-2xl font-semibold;
   }
 
   p {
     @apply leading-relaxed;
+    font-family: "Lato", "Poppins", sans-serif;
   }
 
   .container {
@@ -101,7 +104,7 @@
   }
 
   .section {
-    @apply py-12 md:py-20;
+    @apply py-8 sm:py-12 md:py-20;
   }
 
   .btn-primary {
@@ -137,6 +140,45 @@
   .sanskrit-translation {
     @apply text-sm md:text-base text-yoga-brown/80 mb-6 text-center;
   }
+
+  /* Animation classes */
+  .fade-in {
+    @apply animate-fadeIn;
+  }
+
+  .slide-up {
+    animation: slideUp 0.6s ease-out forwards;
+  }
+
+  .slide-down {
+    animation: slideDown 0.6s ease-out forwards;
+  }
+
+  .slide-left {
+    animation: slideLeft 0.6s ease-out forwards;
+  }
+
+  .slide-right {
+    animation: slideRight 0.6s ease-out forwards;
+  }
+
+  .staggered-item {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .bullet-list {
+    @apply space-y-2;
+  }
+
+  .bullet-list li {
+    @apply flex items-start;
+  }
+
+  .bullet-list li::before {
+    content: "•";
+    @apply text-yoga-burnt mr-2 text-xl;
+  }
 }
 
 /* Smooth Scrolling */
@@ -169,3 +211,67 @@ video {
   }
 }
 
+/* Animation Keyframes */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideLeft {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideRight {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Staggered animation for lists */
+.staggered-container .staggered-item:nth-child(1) {
+  animation: slideUp 0.5s 0.1s forwards;
+}
+.staggered-container .staggered-item:nth-child(2) {
+  animation: slideUp 0.5s 0.2s forwards;
+}
+.staggered-container .staggered-item:nth-child(3) {
+  animation: slideUp 0.5s 0.3s forwards;
+}
+.staggered-container .staggered-item:nth-child(4) {
+  animation: slideUp 0.5s 0.4s forwards;
+}
+.staggered-container .staggered-item:nth-child(5) {
+  animation: slideUp 0.5s 0.5s forwards;
+}
+.staggered-container .staggered-item:nth-child(6) {
+  animation: slideUp 0.5s 0.6s forwards;
+}
