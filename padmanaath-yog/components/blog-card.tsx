@@ -1,67 +1,45 @@
 import Image from "next/image"
 import Link from "next/link"
-import { formatDate } from "@/lib/utils"
+import { Calendar } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 interface BlogCardProps {
   id: number
   title: string
   excerpt: string
   image: string
-  date: string
   author: string
+  date: string
   slug: string
-  tags: string[]
+  className?: string
 }
 
-export default function BlogCard({ id, title, excerpt, image, date, author, slug, tags }: BlogCardProps) {
+export default function BlogCard({ title, excerpt, image, author, date, slug, className }: BlogCardProps) {
   return (
-    <article className="glass-card group overflow-hidden">
-      <div className="relative h-52 w-full">
-        <Image
-          src={image || "/placeholder.svg"}
-          alt={title}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-      </div>
-
-      <div className="p-5">
-        <div className="flex items-center text-sm text-muted-foreground mb-2">
-          <time dateTime={date}>{formatDate(date)}</time>
-          <span className="mx-2">•</span>
-          <span>{author}</span>
+    <Link href={`/blog/${slug}`} className={cn("group block", className)}>
+      <div className="sanatan-card overflow-hidden h-full flex flex-col">
+        <div className="relative h-48 w-full overflow-hidden">
+          <Image
+            src={image || "/placeholder.svg?height=400&width=600"}
+            alt={title}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
         </div>
-
-        <h3 className="text-xl font-semibold mb-2 group-hover:text-yoga-leaf transition-colors">
-          <Link href={`/blog/${slug}`}>{title}</Link>
-        </h3>
-
-        <p className="text-muted-foreground mb-4 line-clamp-2">{excerpt}</p>
-
-        <div className="flex flex-wrap gap-2">
-          {tags.map((tag) => (
-            <span key={tag} className="text-xs px-2 py-1 bg-yoga-mint/30 text-yoga-leaf rounded-full">
-              {tag}
-            </span>
-          ))}
+        <div className="p-5 flex-1 flex flex-col">
+          <h3 className="text-xl font-semibold mb-2 text-yoga-burnt group-hover:text-yoga-lightorange transition-colors">
+            {title}
+          </h3>
+          <p className="text-muted-foreground text-sm mb-4 line-clamp-3 flex-1">{excerpt}</p>
+          <div className="flex justify-between items-center text-sm text-gray-500 mt-auto pt-4 border-t border-gray-100">
+            <span>{author}</span>
+            <div className="flex items-center">
+              <Calendar size={14} className="mr-1 text-yoga-burnt" />
+              <span>{date}</span>
+            </div>
+          </div>
         </div>
-
-        <Link
-          href={`/blog/${slug}`}
-          className="inline-flex items-center mt-4 text-yoga-leaf hover:text-yoga-sage transition-colors text-sm font-medium"
-        >
-          Read more
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 ml-1"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </Link>
       </div>
-    </article>
+    </Link>
   )
 }
