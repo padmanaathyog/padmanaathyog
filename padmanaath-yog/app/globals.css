@@ -181,6 +181,12 @@
   }
 }
 
+/* Ensure dropdowns are visible */
+.dropdown-menu {
+  z-index: 100;
+  position: absolute;
+}
+
 /* Smooth Scrolling */
 html {
   scroll-behavior: smooth;
@@ -274,4 +280,13 @@ video {
 }
 .staggered-container .staggered-item:nth-child(6) {
   animation: slideUp 0.5s 0.6s forwards;
+}
+
+/* Fix for mobile navigation */
+@media (max-width: 768px) {
+  .glass {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    z-index: 50;
+  }
 }

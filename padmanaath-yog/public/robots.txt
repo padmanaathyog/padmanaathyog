@@ -3,4 +3,3 @@ Disallow: /admin-dashboard/
 Allow: /
 
 Sitemap: https://padmanaathyog.com/sitemap.xml
-

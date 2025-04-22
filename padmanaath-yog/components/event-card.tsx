@@ -57,4 +57,3 @@ export default function EventCard({ title, description, image, date, time, locat
     </div>
   )
 }
-

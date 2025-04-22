@@ -1,25 +1,46 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import type React from "react"
+
+import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { Menu, X } from "lucide-react"
+import { Menu, X, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
+import { usePathname } from "next/navigation"
 
+// Define navigation structure with dropdowns
 const navLinks = [
   { href: "/", label: "Home" },
+  {
+    label: "About Us",
+    dropdown: true,
+    items: [
+      { href: "/gallery", label: "Gallery" },
+      { href: "/blog", label: "Blog" },
+      { href: "/events", label: "Events" },
+    ],
+  },
+  {
+    label: "Yoga",
+    dropdown: true,
+    items: [
+      { href: "/therapeutic-yog", label: "Therapeutic Yoga" },
+      { href: "/padmanaath-yog", label: "Padmanaath Yoga" },
+    ],
+  },
   { href: "/the-learned", label: "The Learned" },
-  { href: "/gallery", label: "Gallery" },
-  { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
-  { href: "/events", label: "Events" },
 ]
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
+  const pathname = usePathname()
+  const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({})
 
   // Track scrolling to change navbar appearance
   useEffect(() => {
@@ -37,6 +58,34 @@ export default function Navbar() {
       window.removeEventListener("scroll", handleScroll)
     }
   }, [])
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (activeDropdown) {
+        const currentRef = dropdownRefs.current[activeDropdown]
+        if (currentRef && !currentRef.contains(event.target as Node)) {
+          setActiveDropdown(null)
+        }
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [activeDropdown])
+
+  // Close dropdown when navigating
+  useEffect(() => {
+    setActiveDropdown(null)
+  }, [pathname])
+
+  const toggleDropdown = (e: React.MouseEvent, label: string) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setActiveDropdown(activeDropdown === label ? null : label)
+  }
 
   return (
     <header
@@ -60,13 +109,70 @@ export default function Navbar() {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
           {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="px-3 py-2 text-sm lg:text-base text-gray-700 hover:text-yoga-burnt transition-colors rounded-md"
+            <div
+              key={link.label}
+              className="relative"
+              ref={(el) => {
+                if (link.dropdown) {
+                  dropdownRefs.current[link.label] = el
+                }
+              }}
             >
-              {link.label}
-            </Link>
+              {link.dropdown ? (
+                <>
+                  <button
+                    onClick={(e) => toggleDropdown(e, link.label)}
+                    className={cn(
+                      "px-3 py-2 text-sm lg:text-base flex items-center gap-1 text-gray-700 hover:text-yoga-burnt transition-colors rounded-md",
+                      activeDropdown === link.label && "text-yoga-burnt",
+                    )}
+                    aria-expanded={activeDropdown === link.label}
+                    aria-haspopup="true"
+                  >
+                    {link.label}
+                    <ChevronDown
+                      size={16}
+                      className={cn("transition-transform", activeDropdown === link.label && "rotate-180")}
+                    />
+                  </button>
+                  <AnimatePresence>
+                    {activeDropdown === link.label && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -5 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg py-1 z-50"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {link.items?.map((item) => (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className={cn(
+                              "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-yoga-burnt",
+                              pathname === item.href && "bg-gray-100 text-yoga-burnt",
+                            )}
+                          >
+                            {item.label}
+                          </Link>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </>
+              ) : (
+                <Link
+                  href={link.href}
+                  className={cn(
+                    "px-3 py-2 text-sm lg:text-base text-gray-700 hover:text-yoga-burnt transition-colors rounded-md",
+                    pathname === link.href && "text-yoga-burnt font-medium",
+                  )}
+                >
+                  {link.label}
+                </Link>
+              )}
+            </div>
           ))}
           <Button asChild className="ml-2 bg-yoga-burnt hover:bg-yoga-lightorange">
             <Link href="/book-session">Book a Session</Link>
@@ -91,14 +197,60 @@ export default function Navbar() {
           >
             <nav className="container mx-auto px-4 py-4 flex flex-col space-y-2">
               {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="px-3 py-2 text-gray-700 hover:text-yoga-burnt transition-colors rounded-md"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {link.label}
-                </Link>
+                <div key={link.label} className="flex flex-col">
+                  {link.dropdown ? (
+                    <>
+                      <button
+                        onClick={(e) => toggleDropdown(e, link.label)}
+                        className="px-3 py-2 text-gray-700 hover:text-yoga-burnt transition-colors rounded-md flex justify-between items-center"
+                        aria-expanded={activeDropdown === link.label}
+                      >
+                        {link.label}
+                        <ChevronDown
+                          size={16}
+                          className={cn("transition-transform", activeDropdown === link.label && "rotate-180")}
+                        />
+                      </button>
+                      <AnimatePresence>
+                        {activeDropdown === link.label && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="ml-4 mt-1 flex flex-col space-y-1 border-l-2 border-gray-200 pl-4"
+                          >
+                            {link.items?.map((item) => (
+                              <Link
+                                key={item.href}
+                                href={item.href}
+                                className={cn(
+                                  "px-3 py-2 text-gray-700 hover:text-yoga-burnt transition-colors rounded-md",
+                                  pathname === item.href && "text-yoga-burnt font-medium",
+                                )}
+                                onClick={() => {
+                                  setIsMenuOpen(false)
+                                }}
+                              >
+                                {item.label}
+                              </Link>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      className={cn(
+                        "px-3 py-2 text-gray-700 hover:text-yoga-burnt transition-colors rounded-md",
+                        pathname === link.href && "text-yoga-burnt font-medium",
+                      )}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                  )}
+                </div>
               ))}
               <Button
                 asChild
@@ -114,4 +266,3 @@ export default function Navbar() {
     </header>
   )
 }
-

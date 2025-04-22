@@ -18,4 +18,3 @@ export default function SectionHeader({ title, subtitle, centered = true, classN
     </div>
   )
 }
-

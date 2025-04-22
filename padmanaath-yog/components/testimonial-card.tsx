@@ -32,4 +32,3 @@ export default function TestimonialCard({ name, role, quote, image, rating }: Te
     </div>
   )
 }
-

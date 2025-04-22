@@ -57,4 +57,3 @@ export function setupContentProtection() {
     document.head.appendChild(style)
   }
 }
-

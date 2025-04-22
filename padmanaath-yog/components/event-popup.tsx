@@ -6,21 +6,28 @@ import Link from "next/link"
 import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { upcomingEvents } from "@/lib/data"
+import { usePathname } from "next/navigation"
 
 export default function EventPopup() {
   const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname()
   const latestEvent = upcomingEvents[0] // Get the most recent event
 
+  // Only show on homepage and events page
+  const shouldShowOnPage = pathname === "/" || pathname === "/events" || pathname === "/contact"
+
   useEffect(() => {
-    // Show popup after a short delay
-    const timer = setTimeout(() => {
-      setIsOpen(true)
-    }, 2000)
+    // Show popup after a short delay, but only on allowed pages
+    if (shouldShowOnPage) {
+      const timer = setTimeout(() => {
+        setIsOpen(true)
+      }, 2000)
 
-    return () => clearTimeout(timer)
-  }, [])
+      return () => clearTimeout(timer)
+    }
+  }, [shouldShowOnPage])
 
-  if (!isOpen) return null
+  if (!isOpen || !shouldShowOnPage) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
@@ -71,4 +78,3 @@ export default function EventPopup() {
     </div>
   )
 }
-
