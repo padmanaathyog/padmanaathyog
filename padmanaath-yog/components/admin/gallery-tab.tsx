@@ -1,9 +1,12 @@
 "use client"
-import { motion } from "framer-motion"
+
+import { useState } from "react"
 import Image from "next/image"
-import { Edit, Eye, Trash2, Upload } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Edit, Trash2, ImageIcon, Video } from "lucide-react"
 import type { GalleryImage, GalleryVideo } from "@/lib/services/gallery-service"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 interface GalleryTabProps {
   galleryImages: GalleryImage[]
@@ -16,6 +19,7 @@ interface GalleryTabProps {
   onDeleteVideo: (video: GalleryVideo) => void
   onAddImage: () => void
   onAddVideo: () => void
+  editingItemId: number | null
 }
 
 export default function GalleryTab({
@@ -29,168 +33,156 @@ export default function GalleryTab({
   onDeleteVideo,
   onAddImage,
   onAddVideo,
+  editingItemId,
 }: GalleryTabProps) {
-  // Filter gallery items based on search term
-  const filteredImages =
-    galleryImages && Array.isArray(galleryImages)
-      ? galleryImages.filter(
-          (image) =>
-            image.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            image.description.toLowerCase().includes(searchTerm.toLowerCase()),
-        )
-      : []
+  const [galleryTab, setGalleryTab] = useState("images")
 
-  const filteredVideos =
-    galleryVideos && Array.isArray(galleryVideos)
-      ? galleryVideos.filter(
-          (video) =>
-            video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            video.description.toLowerCase().includes(searchTerm.toLowerCase()),
-        )
-      : []
+  // No filtering by search term anymore
+  const displayedImages = galleryImages
+  const displayedVideos = galleryVideos
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center py-12">
+      <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yoga-burnt"></div>
       </div>
     )
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-medium">Gallery</h3>
-        <div className="flex space-x-2">
-          <Button className="bg-yoga-burnt hover:bg-yoga-lightorange" onClick={onAddImage}>
-            <Upload size={16} className="mr-2" /> Upload Images
-          </Button>
-          <Button className="bg-yoga-burnt hover:bg-yoga-lightorange" onClick={onAddVideo}>
-            <Upload size={16} className="mr-2" /> Add Videos
-          </Button>
-        </div>
-      </div>
+    <div>
+      <Tabs value={galleryTab} onValueChange={setGalleryTab} className="w-full">
+        <TabsList className="w-full max-w-md mx-auto mb-6">
+          <TabsTrigger value="images" className="flex-1">
+            Images ({galleryImages.length})
+          </TabsTrigger>
+          <TabsTrigger value="videos" className="flex-1">
+            Videos ({galleryVideos.length})
+          </TabsTrigger>
+        </TabsList>
 
-      <h4 className="text-md font-medium mb-4">Images ({filteredImages.length})</h4>
-      {filteredImages.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
-          {filteredImages.map((image) => (
-            <motion.div
-              key={image.id}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3 }}
-              className="relative group"
-            >
-              <div className="relative h-24 w-full rounded overflow-hidden">
-                <Image
-                  src={image.src || "/placeholder.svg?height=96&width=128"}
-                  alt={image.title}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="flex space-x-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 w-8 p-0 text-white"
-                    onClick={() => onEditImage(image)}
-                  >
-                    <Edit size={16} />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 w-8 p-0 text-white"
-                    onClick={() => onDeleteImage(image)}
-                  >
-                    <Trash2 size={16} />
-                  </Button>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-white">
-                    <Eye size={16} />
-                  </Button>
-                </div>
-              </div>
-              <div className="mt-1 text-xs truncate">{image.title}</div>
-            </motion.div>
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-6 bg-gray-50 rounded-lg mb-8">
-          <p className="text-gray-500">
-            No images found. {searchTerm ? "Try a different search term." : "Upload your first image!"}
-          </p>
-        </div>
-      )}
-
-      <h4 className="text-md font-medium mb-4">Videos ({filteredVideos.length})</h4>
-      {filteredVideos.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {filteredVideos.map((video) => (
-            <motion.div
-              key={video.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="relative group"
-            >
-              <div className="relative h-36 w-full rounded overflow-hidden">
-                <Image
-                  src={video.thumbnail || "/placeholder.svg?height=144&width=256"}
-                  alt={video.title}
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="h-12 w-12 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center">
-                    <svg className="h-6 w-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-                    </svg>
+        <TabsContent value="images">
+          {displayedImages.length === 0 ? (
+            <div className="text-center py-12">
+              <h3 className="text-lg font-medium text-gray-500">No images found</h3>
+              <p className="text-gray-400 mt-2">Add your first image to get started.</p>
+              <Button className="mt-4 bg-yoga-burnt hover:bg-yoga-lightorange" onClick={onAddImage}>
+                Add Image
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {displayedImages.map((image) => (
+                <Card
+                  key={image.id}
+                  className={`overflow-hidden transition-all duration-200 ${
+                    editingItemId === image.id ? "ring-2 ring-yoga-burnt" : ""
+                  }`}
+                >
+                  <div className="relative h-48 w-full">
+                    {image.url ? (
+                      <Image
+                        src={image.url || "/placeholder.svg"}
+                        alt={image.title || "Gallery image"}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                    ) : (
+                      <div className="h-full w-full bg-gray-200 flex items-center justify-center text-gray-400">
+                        <ImageIcon size={48} />
+                      </div>
+                    )}
                   </div>
-                </div>
-              </div>
-              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="flex space-x-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 w-8 p-0 text-white"
-                    onClick={() => onEditVideo(video)}
-                  >
-                    <Edit size={16} />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 w-8 p-0 text-white"
-                    onClick={() => onDeleteVideo(video)}
-                  >
-                    <Trash2 size={16} />
-                  </Button>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-white">
-                    <Eye size={16} />
-                  </Button>
-                </div>
-              </div>
-              <div className="mt-2">
-                <div className="flex justify-between items-start">
-                  <h4 className="text-sm font-medium truncate">{video.title}</h4>
-                  <span className="text-xs bg-gray-100 px-2 py-0.5 rounded text-gray-600">{video.duration}</span>
-                </div>
-                <p className="text-xs text-gray-500 truncate">{video.description}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-6 bg-gray-50 rounded-lg">
-          <p className="text-gray-500">
-            No videos found. {searchTerm ? "Try a different search term." : "Add your first video!"}
-          </p>
-        </div>
-      )}
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold text-sm mb-1 truncate">{image.title || "Untitled Image"}</h3>
+                    <p className="text-xs text-gray-500 mb-3 line-clamp-2">{image.description || "No description"}</p>
+                    <div className="flex justify-end space-x-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-gray-600 hover:text-yoga-burnt"
+                        onClick={() => onEditImage(image)}
+                      >
+                        <Edit size={14} className="mr-1" /> Edit
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                        onClick={() => onDeleteImage(image)}
+                      >
+                        <Trash2 size={14} className="mr-1" /> Delete
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="videos">
+          {displayedVideos.length === 0 ? (
+            <div className="text-center py-12">
+              <h3 className="text-lg font-medium text-gray-500">No videos found</h3>
+              <p className="text-gray-400 mt-2">Add your first video to get started.</p>
+              <Button className="mt-4 bg-yoga-burnt hover:bg-yoga-lightorange" onClick={onAddVideo}>
+                Add Video
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {displayedVideos.map((video) => (
+                <Card
+                  key={video.id}
+                  className={`overflow-hidden transition-all duration-200 ${
+                    editingItemId === video.id ? "ring-2 ring-yoga-burnt" : ""
+                  }`}
+                >
+                  <div className="relative h-48 w-full">
+                    {video.thumbnail ? (
+                      <Image
+                        src={video.thumbnail || "/placeholder.svg"}
+                        alt={video.title || "Video thumbnail"}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                    ) : (
+                      <div className="h-full w-full bg-gray-200 flex items-center justify-center text-gray-400">
+                        <Video size={48} />
+                      </div>
+                    )}
+                  </div>
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold text-sm mb-1 truncate">{video.title || "Untitled Video"}</h3>
+                    <p className="text-xs text-gray-500 mb-3 line-clamp-2">{video.description || "No description"}</p>
+                    <div className="flex justify-end space-x-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-gray-600 hover:text-yoga-burnt"
+                        onClick={() => onEditVideo(video)}
+                      >
+                        <Edit size={14} className="mr-1" /> Edit
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                        onClick={() => onDeleteVideo(video)}
+                      >
+                        <Trash2 size={14} className="mr-1" /> Delete
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

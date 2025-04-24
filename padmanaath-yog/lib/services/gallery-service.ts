@@ -1,5 +1,6 @@
 import { supabase } from "../supabase"
 import type { Database } from "../database.types"
+import { StorageService } from "./storage-service"
 
 export type GalleryImage = Database["public"]["Tables"]["gallery_images"]["Row"]
 export type GalleryImageInsert = Database["public"]["Tables"]["gallery_images"]["Insert"]
@@ -78,6 +79,7 @@ export const GalleryService = {
         .insert([
           {
             ...image,
+            category: image.category || "all", // Default to "all" if no category is specified
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           },
@@ -99,6 +101,19 @@ export const GalleryService = {
 
   async updateImage(id: number, image: GalleryImageUpdate): Promise<GalleryImage | null> {
     try {
+      // First, get the current image to check if we need to delete an old image
+      const { data: currentImage, error: fetchError } = await supabase
+        .from("gallery_images")
+        .select("*")
+        .eq("id", id)
+        .single()
+
+      if (fetchError) {
+        console.error(`Error fetching gallery image with id ${id}:`, fetchError)
+        throw new Error(`Failed to fetch gallery image: ${fetchError.message}`)
+      }
+
+      // Update the image record
       const { data, error } = await supabase
         .from("gallery_images")
         .update({
@@ -114,6 +129,16 @@ export const GalleryService = {
         throw new Error(`Failed to update gallery image: ${error.message}`)
       }
 
+      // If the image URL has changed and the old one was in Supabase storage, delete it
+      if (currentImage && currentImage.url && image.url && currentImage.url !== image.url) {
+        try {
+          await StorageService.deleteImage(currentImage.url)
+        } catch (imageError) {
+          console.error(`Error deleting old gallery image:`, imageError)
+          // Continue even if image deletion fails
+        }
+      }
+
       return data
     } catch (error) {
       console.error(`Error in updateImage for image ${id}:`, error)
@@ -123,11 +148,34 @@ export const GalleryService = {
 
   async deleteImage(id: number): Promise<boolean> {
     try {
+      // First, get the image to check if it has a URL in Supabase storage
+      const { data: image, error: fetchError }  = await supabase.from("gallery_images").select("*").eq("id", id).single()
+
+      if (fetchError) {
+        console.error(`Error fetching gallery image with id ${id}:`, fetchError)
+        throw new Error(`Failed to fetch gallery image: ${fetchError.message}`)
+      }
+
+      // Delete the image record
       const { error } = await supabase.from("gallery_images").delete().eq("id", id)
 
       if (error) {
         console.error(`Error deleting gallery image with id ${id}:`, error)
         throw new Error(`Failed to delete gallery image: ${error.message}`)
+      }
+
+      // If the image had a URL in Supabase storage, delete it
+      if (image && image.url) {
+        try {
+          console.log(`Attempting to delete image file for gallery image ${id}: ${image.url}`)
+          const deleted = await StorageService.deleteImage(image.url)
+          if (!deleted) {
+            console.warn(`Could not delete image file for gallery image ${id}`)
+          }
+        } catch (imageError) {
+          console.error(`Error deleting gallery image file:`, imageError)
+          // Continue even if image deletion fails
+        }
       }
 
       return true
@@ -205,6 +253,7 @@ export const GalleryService = {
         .insert([
           {
             ...video,
+            category: video.category || "all", // Default to "all" if no category is specified
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           },
@@ -226,6 +275,19 @@ export const GalleryService = {
 
   async updateVideo(id: number, video: GalleryVideoUpdate): Promise<GalleryVideo | null> {
     try {
+      // First, get the current video to check if we need to delete an old thumbnail
+      const { data: currentVideo, error: fetchError } = await supabase
+        .from("gallery_videos")
+        .select("*")
+        .eq("id", id)
+        .single()
+
+      if (fetchError) {
+        console.error(`Error fetching gallery video with id ${id}:`, fetchError)
+        throw new Error(`Failed to fetch gallery video: ${fetchError.message}`)
+      }
+
+      // Update the video record
       const { data, error } = await supabase
         .from("gallery_videos")
         .update({
@@ -241,6 +303,16 @@ export const GalleryService = {
         throw new Error(`Failed to update gallery video: ${error.message}`)
       }
 
+      // If the thumbnail URL has changed and the old one was in Supabase storage, delete it
+      if (currentVideo && currentVideo.thumbnail && video.thumbnail && currentVideo.thumbnail !== video.thumbnail) {
+        try {
+          await StorageService.deleteImage(currentVideo.thumbnail)
+        } catch (imageError) {
+          console.error(`Error deleting old gallery video thumbnail:`, imageError)
+          // Continue even if thumbnail deletion fails
+        }
+      }
+
       return data
     } catch (error) {
       console.error(`Error in updateVideo for video ${id}:`, error)
@@ -250,11 +322,34 @@ export const GalleryService = {
 
   async deleteVideo(id: number): Promise<boolean> {
     try {
+      // First, get the video to check if it has a thumbnail in Supabase storage
+      const { data: video, error: fetchError } = await supabase.from("gallery_videos").select("*").eq("id", id).single()
+
+      if (fetchError) {
+        console.error(`Error fetching gallery video with id ${id}:`, fetchError)
+        throw new Error(`Failed to fetch gallery video: ${fetchError.message}`)
+      }
+
+      // Delete the video record
       const { error } = await supabase.from("gallery_videos").delete().eq("id", id)
 
       if (error) {
         console.error(`Error deleting gallery video with id ${id}:`, error)
         throw new Error(`Failed to delete gallery video: ${error.message}`)
+      }
+
+      // If the video had a thumbnail in Supabase storage, delete it
+      if (video && video.thumbnail) {
+        try {
+          console.log(`Attempting to delete thumbnail for gallery video ${id}: ${video.thumbnail}`)
+          const deleted = await StorageService.deleteImage(video.thumbnail)
+          if (!deleted) {
+            console.warn(`Could not delete thumbnail for gallery video ${id}`)
+          }
+        } catch (imageError) {
+          console.error(`Error deleting gallery video thumbnail:`, imageError)
+          // Continue even if thumbnail deletion fails
+        }
       }
 
       return true

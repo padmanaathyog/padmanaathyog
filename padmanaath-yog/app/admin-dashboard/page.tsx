@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
-import { Search, ArrowLeft, Plus } from "lucide-react"
+import { ArrowLeft, Plus } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
 
 // Import services
@@ -21,6 +21,8 @@ import EventsTab from "@/components/admin/events-tab"
 import TestimonialModal from "@/components/admin/testimonial-modal"
 import EventModal from "@/components/admin/event-modal"
 import DeleteModal from "@/components/admin/delete-modal"
+import GalleryImageModal from "@/components/admin/gallery-image-modal"
+import GalleryVideoModal from "@/components/admin/gallery-video-modal"
 
 export default function AdminDashboard() {
   const router = useRouter()
@@ -37,9 +39,8 @@ export default function AdminDashboard() {
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([])
   const [galleryVideos, setGalleryVideos] = useState<GalleryVideo[]>([])
   const [events, setEvents] = useState<Event[]>([])
-
-  // Search state
-  const [searchTerm, setSearchTerm] = useState("")
+  const [imageCategories, setImageCategories] = useState<string[]>([])
+  const [videoCategories, setVideoCategories] = useState<string[]>([])
 
   // Loading state
   const [isLoading, setIsLoading] = useState(false)
@@ -47,10 +48,13 @@ export default function AdminDashboard() {
   // Modal states
   const [testimonialModalOpen, setTestimonialModalOpen] = useState(false)
   const [eventModalOpen, setEventModalOpen] = useState(false)
+  const [galleryImageModalOpen, setGalleryImageModalOpen] = useState(false)
+  const [galleryVideoModalOpen, setGalleryVideoModalOpen] = useState(false)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
 
   // Current item being edited/deleted
   const [currentItem, setCurrentItem] = useState<any>(null)
+  const [editingItemId, setEditingItemId] = useState<number | null>(null)
 
   // Check authentication status on mount
   useEffect(() => {
@@ -89,6 +93,9 @@ export default function AdminDashboard() {
           try {
             const imageResult = await GalleryService.getAllImages()
             setGalleryImages(imageResult?.data || [])
+
+            const imageCats = await GalleryService.getImageCategories()
+            setImageCategories(imageCats || [])
           } catch (error) {
             console.error("Error loading gallery images:", error)
             setGalleryImages([])
@@ -97,6 +104,9 @@ export default function AdminDashboard() {
           try {
             const videoResult = await GalleryService.getAllVideos()
             setGalleryVideos(videoResult?.data || [])
+
+            const videoCats = await GalleryService.getVideoCategories()
+            setVideoCategories(videoCats || [])
           } catch (error) {
             console.error("Error loading gallery videos:", error)
             setGalleryVideos([])
@@ -144,12 +154,26 @@ export default function AdminDashboard() {
   // Open modals
   const openTestimonialModal = (testimonial: Testimonial | null = null) => {
     setCurrentItem(testimonial)
+    setEditingItemId(testimonial?.id || null)
     setTestimonialModalOpen(true)
   }
 
   const openEventModal = (event: Event | null = null) => {
     setCurrentItem(event)
+    setEditingItemId(event?.id || null)
     setEventModalOpen(true)
+  }
+
+  const openGalleryImageModal = (image: GalleryImage | null = null) => {
+    setCurrentItem(image)
+    setEditingItemId(image?.id || null)
+    setGalleryImageModalOpen(true)
+  }
+
+  const openGalleryVideoModal = (video: GalleryVideo | null = null) => {
+    setCurrentItem(video)
+    setEditingItemId(video?.id || null)
+    setGalleryVideoModalOpen(true)
   }
 
   const openDeleteModal = (item: any) => {
@@ -223,25 +247,26 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 pt-16">
-      <header className="bg-yoga-burnt text-white p-4 z-10 shadow-md">
+    <div className="min-h-screen bg-gray-100">
+      {/* Fixed header with z-index to ensure it stays on top */}
+      <header className="bg-yoga-burnt text-white p-4 fixed top-0 left-0 right-0 z-50 shadow-md">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center">
             <h1 className="text-xl sm:text-2xl font-bold">Padmanaath Yog Admin</h1>
           </div>
           <div className="flex items-center space-x-2">
             <Button
-              variant="outline"
+              variant="secondary"
               size="sm"
-              className="text-white border-white hover:bg-white hover:text-yoga-burnt hidden sm:flex"
+              className="bg-white text-yoga-burnt hover:bg-gray-100 hidden sm:flex"
               onClick={handleBack}
             >
               <ArrowLeft size={16} className="mr-1" /> Back to Website
             </Button>
             <Button
-              variant="outline"
+              variant="secondary"
               size="sm"
-              className="text-white border-white hover:bg-white hover:text-yoga-burnt"
+              className="bg-white text-yoga-burnt hover:bg-gray-100"
               onClick={handleLogout}
             >
               Logout
@@ -250,7 +275,8 @@ export default function AdminDashboard() {
         </div>
       </header>
 
-      <main className="container mx-auto py-6 px-4">
+      {/* Add padding to the top to account for the fixed header */}
+      <main className="container mx-auto py-6 px-4 pt-24">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="w-full flex justify-start mb-6 bg-white p-1 rounded-lg shadow-sm overflow-x-auto">
             <TabsTrigger value="testimonials" className="flex-1 min-w-[100px]">
@@ -264,37 +290,41 @@ export default function AdminDashboard() {
             </TabsTrigger>
           </TabsList>
 
-          {/* Search Bar */}
-          <div className="bg-white p-4 rounded-lg shadow-sm mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="relative w-full sm:w-auto flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-              <input
-                type="text"
-                placeholder={`Search ${activeTab}...`}
-                className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yoga-burnt"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
-              <Button
-                className="bg-yoga-burnt hover:bg-yoga-lightorange whitespace-nowrap"
-                onClick={() => {
-                  switch (activeTab) {
-                    case "testimonials":
-                      openTestimonialModal()
-                      break
-                    case "gallery":
-                      // Handle in the gallery tab
-                      break
-                    case "events":
-                      openEventModal()
-                      break
-                  }
-                }}
-              >
-                <Plus size={16} className="mr-1" /> Add New
-              </Button>
+          {/* Action Buttons - Removed search bar */}
+          <div className="bg-white p-4 rounded-lg shadow-sm mb-6 flex justify-end">
+            <div className="flex items-center space-x-2">
+              {activeTab === "gallery" ? (
+                <>
+                  <Button
+                    className="bg-yoga-burnt hover:bg-yoga-lightorange whitespace-nowrap"
+                    onClick={() => openGalleryImageModal()}
+                  >
+                    <Plus size={16} className="mr-1" /> Add Image
+                  </Button>
+                  <Button
+                    className="bg-yoga-burnt hover:bg-yoga-lightorange whitespace-nowrap"
+                    onClick={() => openGalleryVideoModal()}
+                  >
+                    <Plus size={16} className="mr-1" /> Add Video
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  className="bg-yoga-burnt hover:bg-yoga-lightorange whitespace-nowrap"
+                  onClick={() => {
+                    switch (activeTab) {
+                      case "testimonials":
+                        openTestimonialModal()
+                        break
+                      case "events":
+                        openEventModal()
+                        break
+                    }
+                  }}
+                >
+                  <Plus size={16} className="mr-1" /> Add New
+                </Button>
+              )}
             </div>
           </div>
 
@@ -303,10 +333,11 @@ export default function AdminDashboard() {
             <TestimonialsTab
               testimonials={testimonials}
               isLoading={isLoading}
-              searchTerm={searchTerm}
+              searchTerm=""
               onEdit={openTestimonialModal}
               onDelete={openDeleteModal}
               refreshData={loadData}
+              editingItemId={editingItemId}
             />
           </TabsContent>
 
@@ -316,13 +347,14 @@ export default function AdminDashboard() {
               galleryImages={galleryImages}
               galleryVideos={galleryVideos}
               isLoading={isLoading}
-              searchTerm={searchTerm}
-              onEditImage={(image) => openDeleteModal(image)}
-              onEditVideo={(video) => openDeleteModal(video)}
+              searchTerm=""
+              onEditImage={openGalleryImageModal}
+              onEditVideo={openGalleryVideoModal}
               onDeleteImage={openDeleteModal}
               onDeleteVideo={openDeleteModal}
-              onAddImage={() => {}}
-              onAddVideo={() => {}}
+              onAddImage={() => openGalleryImageModal()}
+              onAddVideo={() => openGalleryVideoModal()}
+              editingItemId={editingItemId}
             />
           </TabsContent>
 
@@ -331,9 +363,10 @@ export default function AdminDashboard() {
             <EventsTab
               events={events}
               isLoading={isLoading}
-              searchTerm={searchTerm}
+              searchTerm=""
               onEdit={openEventModal}
               onDelete={openDeleteModal}
+              editingItemId={editingItemId}
             />
           </TabsContent>
         </Tabs>
@@ -350,16 +383,44 @@ export default function AdminDashboard() {
       {/* Modals */}
       <TestimonialModal
         isOpen={testimonialModalOpen}
-        onClose={() => setTestimonialModalOpen(false)}
+        onClose={() => {
+          setTestimonialModalOpen(false)
+          setEditingItemId(null)
+        }}
         testimonial={currentItem}
         onSuccess={loadData}
       />
 
       <EventModal
         isOpen={eventModalOpen}
-        onClose={() => setEventModalOpen(false)}
+        onClose={() => {
+          setEventModalOpen(false)
+          setEditingItemId(null)
+        }}
         event={currentItem}
         onSuccess={loadData}
+      />
+
+      <GalleryImageModal
+        isOpen={galleryImageModalOpen}
+        onClose={() => {
+          setGalleryImageModalOpen(false)
+          setEditingItemId(null)
+        }}
+        image={currentItem}
+        onSuccess={loadData}
+        categories={imageCategories}
+      />
+
+      <GalleryVideoModal
+        isOpen={galleryVideoModalOpen}
+        onClose={() => {
+          setGalleryVideoModalOpen(false)
+          setEditingItemId(null)
+        }}
+        video={currentItem}
+        onSuccess={loadData}
+        categories={videoCategories}
       />
 
       <DeleteModal

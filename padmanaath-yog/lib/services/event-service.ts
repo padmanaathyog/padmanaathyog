@@ -207,6 +207,15 @@ export const EventService = {
 
   async delete(id: number): Promise<boolean> {
     try {
+      // First, get the event to check if it has an image
+      const { data: event, error: fetchError } = await supabase.from("events").select("image").eq("id", id).single()
+
+      if (fetchError) {
+        console.error(`Error fetching event with id ${id}:`, fetchError)
+        throw new Error(`Failed to fetch event: ${fetchError.message}`)
+      }
+
+      // Delete the event
       const { error } = await supabase.from("events").delete().eq("id", id)
 
       if (error) {
@@ -214,10 +223,61 @@ export const EventService = {
         throw new Error(`Failed to delete event: ${error.message}`)
       }
 
+      // If the event had an image stored in Supabase, delete it
+      if (event && event.image && event.image.includes("storage.googleapis.com")) {
+        try {
+          await this.deleteEventImage(event.image)
+        } catch (imageError) {
+          console.error(`Error deleting event image:`, imageError)
+          // Continue even if image deletion fails
+        }
+      }
+
       return true
     } catch (error) {
       console.error(`Error in delete for event ${id}:`, error)
       throw error
+    }
+  },
+  async updatePastStatus(): Promise<void> {
+    try {
+      const today = new Date().toISOString()
+
+      // Update all events where the date is in the past and is_past is still false
+      const { error } = await supabase
+        .from("events")
+        .update({ is_past: true, updated_at: new Date().toISOString() })
+        .lt("date", today)
+        .eq("is_past", false)
+
+      if (error) {
+        console.error("Error updating past statuses:", error)
+        throw new Error(`Failed to update past statuses: ${error.message}`)
+      }
+    } catch (error) {
+      console.error("Error in updatePastStatus:", error)
+      throw error
+    }
+  },
+
+  async deleteEventImage(imageUrl: string): Promise<boolean> {
+    try {
+      // Extract the file path from the URL
+      const urlParts = imageUrl.split("/")
+      const fileName = urlParts[urlParts.length - 1]
+
+      // Delete from Supabase Storage
+      const { error } = await supabase.storage.from("events").remove([fileName])
+
+      if (error) {
+        console.error("Error deleting image from storage:", error)
+        return false
+      }
+
+      return true
+    } catch (error) {
+      console.error("Error in deleteEventImage:", error)
+      return false
     }
   },
 }

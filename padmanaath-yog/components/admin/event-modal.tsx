@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
 import { X, Upload } from "lucide-react"
 import {
@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { EventService, type Event } from "@/lib/services/event-service"
 import { StorageService } from "@/lib/services/storage-service"
+import { toast } from "@/hooks/use-toast"
 
 interface EventModalProps {
   isOpen: boolean
@@ -38,9 +39,35 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
     date: event?.date || "",
     time: event?.time || "",
     location: event?.location || "",
-    price: event?.price ? event.price.replace("₹", "") : "",
     spots: event?.spots || 20,
   })
+
+  // For time input
+  const [timeInput, setTimeInput] = useState("")
+
+  useEffect(() => {
+    if (event) {
+      // Parse the time from "12:00 PM" format to "12:00" for the time input
+      let timeValue = ""
+      if (event.time) {
+        const timeParts = event.time.match(/(\d+):(\d+)\s*(AM|PM)/)
+        if (timeParts) {
+          let hours = Number.parseInt(timeParts[1], 10)
+          const minutes = timeParts[2]
+          const ampm = timeParts[3]
+
+          // Convert to 24-hour format for the input
+          if (ampm === "PM" && hours < 12) hours += 12
+          if (ampm === "AM" && hours === 12) hours = 0
+
+          timeValue = `${hours.toString().padStart(2, "0")}:${minutes}`
+        }
+      }
+      setTimeInput(timeValue)
+    } else {
+      setTimeInput("")
+    }
+  }, [event])
 
   const imageInputRef = useRef<HTMLInputElement>(null)
   const isEditing = !!event
@@ -61,6 +88,21 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
   }
 
   const handleSubmit = async () => {
+    if (
+      !formData.title.trim() ||
+      !formData.description.trim() ||
+      !formData.date ||
+      !formData.time ||
+      !formData.location
+    ) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      })
+      return
+    }
+
     setIsLoading(true)
 
     try {
@@ -69,17 +111,32 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
       // Upload new image if provided
       if (formData.imageFile) {
         try {
-          const uploadedUrl = await StorageService.uploadImage(formData.imageFile)
-          if (uploadedUrl) {
-            imageUrl = uploadedUrl
+          const uploadedUrl = await StorageService.uploadImage(formData.imageFile, "events")
+          if (!uploadedUrl) {
+            toast({
+              title: "Image Upload Failed",
+              description: "Failed to upload image. Please try again or use an image URL.",
+              variant: "destructive",
+            })
+            setIsLoading(false)
+            return
           }
+          imageUrl = uploadedUrl
         } catch (error) {
           console.error("Image upload failed:", error)
-          // Continue with the existing image URL or form submission
+          toast({
+            title: "Image Upload Failed",
+            description: "Failed to upload image. Please try again or use an image URL.",
+            variant: "destructive",
+          })
+          setIsLoading(false)
+          return
         }
       }
 
-      const formattedPrice = formData.price.startsWith("₹") ? formData.price : `₹${formData.price}`
+      // Calculate if the event is in the past
+      const eventDate = new Date(formData.date)
+      const isPast = eventDate < new Date()
 
       if (isEditing && event) {
         await EventService.update(event.id, {
@@ -89,8 +146,12 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
           date: formData.date,
           time: formData.time,
           location: formData.location,
-          price: formattedPrice,
           spots: formData.spots,
+          is_past: isPast,
+        })
+        toast({
+          title: "Success",
+          description: "Event updated successfully!",
         })
       } else {
         await EventService.create({
@@ -100,8 +161,12 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
           date: formData.date,
           time: formData.time,
           location: formData.location,
-          price: formattedPrice,
           spots: formData.spots,
+          is_past: isPast,
+        })
+        toast({
+          title: "Success",
+          description: "Event created successfully!",
         })
       }
 
@@ -109,8 +174,30 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
       onClose()
     } catch (error) {
       console.error("Error saving event:", error)
+      toast({
+        title: "Error",
+        description: "Failed to save event. Please try again.",
+        variant: "destructive",
+      })
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  // Format date for input
+  const formatDateForInput = (dateString: string) => {
+    if (!dateString) return ""
+
+    try {
+      // Try to parse the date string
+      const date = new Date(dateString)
+      if (isNaN(date.getTime())) return ""
+
+      // Format as YYYY-MM-DD
+      return date.toISOString().split("T")[0]
+    } catch (error) {
+      console.error("Error formatting date:", error)
+      return ""
     }
   }
 
@@ -126,18 +213,19 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="eventTitle" className="text-right">
-              Title
+              Title*
             </Label>
             <Input
               id="eventTitle"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               className="col-span-3"
+              required
             />
           </div>
           <div className="grid grid-cols-4 items-start gap-4">
             <Label htmlFor="eventDescription" className="text-right pt-2">
-              Description
+              Description*
             </Label>
             <Textarea
               id="eventDescription"
@@ -145,6 +233,7 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               className="col-span-3"
               rows={3}
+              required
             />
           </div>
           <div className="grid grid-cols-4 items-start gap-4">
@@ -167,7 +256,7 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
                         type="button"
                         onClick={(e) => {
                           e.preventDefault()
-                          setFormData({ ...formData, imageFile: null, imagePreview: "" })
+                          setFormData({ ...formData, imageFile: null, imagePreview: "", image: "" })
                         }}
                         className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
                       >
@@ -180,7 +269,7 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
                       <p className="mb-2 text-sm text-gray-500">
                         <span className="font-semibold">Click to upload</span> or drag and drop
                       </p>
-                      <p className="text-xs text-gray-500">PNG, JPG or WEBP (MAX. 2MB)</p>
+                      <p className="text-xs text-gray-500">PNG, JPG or WEBP (Optional)</p>
                     </div>
                   )}
                   <input
@@ -209,48 +298,64 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="eventDate" className="text-right">
-              Date
+              Date*
             </Label>
             <Input
               id="eventDate"
-              value={formData.date}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              placeholder="July 21, 2023"
+              type="date"
+              value={formatDateForInput(formData.date)}
+              onChange={(e) => {
+                const selectedDate = e.target.value
+                if (selectedDate) {
+                  const date = new Date(selectedDate)
+                  const formattedDate = date.toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
+                  setFormData({ ...formData, date: formattedDate })
+                }
+              }}
               className="col-span-3"
+              required
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="eventTime" className="text-right">
-              Time
+              Time*
             </Label>
             <Input
               id="eventTime"
-              value={formData.time}
-              onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-              placeholder="5:30 AM - 2:00 PM"
+              type="time"
+              value={timeInput}
+              onChange={(e) => {
+                const timeValue = e.target.value
+                setTimeInput(timeValue)
+
+                if (timeValue) {
+                  // Convert 24-hour format to 12-hour format with AM/PM
+                  const [hours24, minutes] = timeValue.split(":")
+                  const hours = Number.parseInt(hours24, 10)
+                  const ampm = hours >= 12 ? "PM" : "AM"
+                  const hours12 = hours % 12 || 12
+                  const formattedTime = `${hours12}:${minutes} ${ampm}`
+                  setFormData({ ...formData, time: formattedTime })
+                }
+              }}
               className="col-span-3"
+              required
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="eventLocation" className="text-right">
-              Location
+              Location*
             </Label>
             <Input
               id="eventLocation"
               value={formData.location}
               onChange={(e) => setFormData({ ...formData, location: e.target.value })}
               className="col-span-3"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="eventPrice" className="text-right">
-              Price (₹)
-            </Label>
-            <Input
-              id="eventPrice"
-              value={formData.price}
-              onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-              className="col-span-3"
+              required
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

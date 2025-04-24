@@ -1,21 +1,18 @@
 "use server"
-
 import { createClient } from "@supabase/supabase-js"
 import type { Database } from "./database.types"
 
 // Check if environment variables are set
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-console.log("Supabase URL:", supabaseUrl);
-console.log("Supabase Service Key:", supabaseServiceKey);
+
+// Validate environment variables
 if (!supabaseUrl || !supabaseServiceKey) {
   console.error("Missing Supabase admin environment variables. Please check your environment configuration.")
-  // Either throw an error or set supabaseAdmin to null
-  throw new Error("Supabase environment variables are required")
 }
 
 // Create Supabase admin client with service role key
-export const supabaseAdmin = createClient<Database>(supabaseUrl , supabaseServiceKey , {
+export const supabaseAdmin = createClient<Database>(supabaseUrl || "", supabaseServiceKey || "", {
   auth: {
     autoRefreshToken: false,
     persistSession: false,

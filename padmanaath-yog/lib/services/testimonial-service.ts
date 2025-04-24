@@ -1,5 +1,6 @@
 import { supabase } from "../supabase"
 import type { Database } from "../database.types"
+import { StorageService } from "./storage-service"
 
 export type Testimonial = Database["public"]["Tables"]["testimonials"]["Row"]
 export type TestimonialInsert = Database["public"]["Tables"]["testimonials"]["Insert"]
@@ -44,7 +45,7 @@ export const TestimonialService = {
     }
   },
 
-  async getFeatured(limit = 3): Promise<Testimonial[]> {
+  async getFeatured(limit = 5): Promise<Testimonial[]> {
     try {
       const { data, error } = await supabase
         .from("testimonials")
@@ -112,6 +113,19 @@ export const TestimonialService = {
 
   async update(id: number, testimonial: TestimonialUpdate): Promise<Testimonial | null> {
     try {
+      // First, get the current testimonial to check if we need to delete an old image
+      const { data: currentTestimonial, error: fetchError } = await supabase
+        .from("testimonials")
+        .select("*")
+        .eq("id", id)
+        .single()
+
+      if (fetchError) {
+        console.error(`Error fetching testimonial with id ${id}:`, fetchError)
+        throw new Error(`Failed to fetch testimonial: ${fetchError.message}`)
+      }
+
+      // Update the testimonial record
       const { data, error } = await supabase
         .from("testimonials")
         .update({
@@ -127,6 +141,21 @@ export const TestimonialService = {
         throw new Error(`Failed to update testimonial: ${error.message}`)
       }
 
+      // If the image URL has changed and the old one was in Supabase storage, delete it
+      if (
+        currentTestimonial &&
+        currentTestimonial.image &&
+        testimonial.image &&
+        currentTestimonial.image !== testimonial.image
+      ) {
+        try {
+          await StorageService.deleteImage(currentTestimonial.image)
+        } catch (imageError) {
+          console.error(`Error deleting old testimonial image:`, imageError)
+          // Continue even if image deletion fails
+        }
+      }
+
       return data
     } catch (error) {
       console.error(`Error in update for testimonial ${id}:`, error)
@@ -136,11 +165,38 @@ export const TestimonialService = {
 
   async delete(id: number): Promise<boolean> {
     try {
+      // First, get the testimonial to check if it has an image in Supabase storage
+      const { data: testimonial, error: fetchError } = await supabase
+        .from("testimonials")
+        .select("*")
+        .eq("id", id)
+        .single()
+
+      if (fetchError) {
+        console.error(`Error fetching testimonial with id ${id}:`, fetchError)
+        throw new Error(`Failed to fetch testimonial: ${fetchError.message}`)
+      }
+
+      // Delete the testimonial record
       const { error } = await supabase.from("testimonials").delete().eq("id", id)
 
       if (error) {
         console.error(`Error deleting testimonial with id ${id}:`, error)
         throw new Error(`Failed to delete testimonial: ${error.message}`)
+      }
+
+      // If the testimonial had an image in Supabase storage, delete it
+      if (testimonial && testimonial.image) {
+        try {
+          console.log(`Attempting to delete image for testimonial ${id}: ${testimonial.image}`)
+          const deleted = await StorageService.deleteImage(testimonial.image)
+          if (!deleted) {
+            console.warn(`Could not delete image for testimonial ${id}`)
+          }
+        } catch (imageError) {
+          console.error(`Error deleting testimonial image:`, imageError)
+          // Continue even if image deletion fails
+        }
       }
 
       return true

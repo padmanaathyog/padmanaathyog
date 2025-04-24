@@ -42,6 +42,9 @@ export default function EventsPage() {
         setLoading(true)
         setError(null)
 
+        // Update event statuses first
+        await EventService.updatePastStatus()
+
         const [upcomingResult, pastResult] = await Promise.all([
           EventService.getUpcomingEvents(currentUpcomingPage, eventsPerPage),
           EventService.getPastEvents(currentPastPage, eventsPerPage),
@@ -249,11 +252,6 @@ export default function EventsPage() {
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    <div className="absolute bottom-4 left-4 z-10">
-                      <span className="px-3 py-1 bg-yoga-burnt text-white rounded-full text-sm font-medium">
-                        {event.price}
-                      </span>
-                    </div>
                   </div>
 
                   <div className="p-5">
@@ -279,7 +277,12 @@ export default function EventsPage() {
                       </div>
                     </div>
 
-                    <Button className="w-full bg-yoga-burnt hover:bg-yoga-lightorange">Book Now</Button>
+                    <Button
+                      className="w-full bg-yoga-burnt hover:bg-yoga-lightorange"
+                      onClick={() => window.open("https://forms.gle/YourGoogleFormLink", "_blank")}
+                    >
+                      Book Now
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -333,6 +336,7 @@ export default function EventsPage() {
                     <Button
                       variant="outline"
                       className="w-full border-yoga-burnt text-yoga-burnt hover:bg-yoga-burnt hover:text-white"
+                      onClick={() => window.open("/gallery", "_self")}
                     >
                       View Gallery
                     </Button>
