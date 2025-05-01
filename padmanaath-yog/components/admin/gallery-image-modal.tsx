@@ -1,10 +1,10 @@
 "use client"
 
 import type React from "react"
-
-import { useState, useRef } from "react"
+import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import { X, Upload } from "lucide-react"
+
 import {
   Dialog,
   DialogContent,
@@ -29,29 +29,49 @@ interface GalleryImageModalProps {
   categories: string[]
 }
 
-export default function GalleryImageModal({ isOpen, onClose, image, onSuccess, categories }: GalleryImageModalProps) {
+export default function GalleryImageModal({
+  isOpen,
+  onClose,
+  image,
+  onSuccess,
+  categories,
+}: GalleryImageModalProps) {
   const [isLoading, setIsLoading] = useState(false)
+
   const [formData, setFormData] = useState({
-    title: image?.title || "",
-    description: image?.description || "",
-    url: image?.url || "",
+    title: "",
+    description: "",
+    url: "",
     imageFile: null as File | null,
-    imagePreview: image?.url || "",
+    imagePreview: "",
   })
 
   const imageInputRef = useRef<HTMLInputElement>(null)
   const isEditing = !!image
+
+  // Reset form when modal opens or image changes
+  useEffect(() => {
+    if (isOpen) {
+      setFormData({
+        title: image?.title || "",
+        description: image?.description || "",
+        url: image?.url || "",
+        imageFile: null,
+        imagePreview: image?.url || "",
+      })
+    }
+  }, [isOpen, image])
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
       const reader = new FileReader()
       reader.onloadend = () => {
-        setFormData({
-          ...formData,
+        setFormData((prev) => ({
+          ...prev,
           imageFile: file,
           imagePreview: reader.result as string,
-        })
+        }))
       }
       reader.readAsDataURL(file)
     }
@@ -81,7 +101,6 @@ export default function GalleryImageModal({ isOpen, onClose, image, onSuccess, c
     try {
       let imageUrl = formData.url
 
-      // Upload new image if provided
       if (formData.imageFile) {
         try {
           const uploadedUrl = await StorageService.uploadImage(formData.imageFile)
@@ -107,27 +126,20 @@ export default function GalleryImageModal({ isOpen, onClose, image, onSuccess, c
         }
       }
 
-      // Category will be automatically set to "all" in the service if not specified
       if (isEditing && image) {
         await GalleryService.updateImage(image.id, {
           title: formData.title,
           description: formData.description,
           url: imageUrl,
         })
-        toast({
-          title: "Success",
-          description: "Image updated successfully!",
-        })
+        toast({ title: "Success", description: "Image updated successfully!" })
       } else {
         await GalleryService.createImage({
           title: formData.title,
           description: formData.description,
           url: imageUrl,
         })
-        toast({
-          title: "Success",
-          description: "Image added successfully!",
-        })
+        toast({ title: "Success", description: "Image added successfully!" })
       }
 
       onSuccess()
@@ -150,9 +162,12 @@ export default function GalleryImageModal({ isOpen, onClose, image, onSuccess, c
         <DialogHeader>
           <DialogTitle>{isEditing ? "Edit Gallery Image" : "Add New Gallery Image"}</DialogTitle>
           <DialogDescription>
-            {isEditing ? "Update the image details below." : "Fill in the details for your new gallery image."}
+            {isEditing
+              ? "Update the image details below."
+              : "Fill in the details for your new gallery image."}
           </DialogDescription>
         </DialogHeader>
+
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="imageTitle" className="text-right">
@@ -161,7 +176,9 @@ export default function GalleryImageModal({ isOpen, onClose, image, onSuccess, c
             <Input
               id="imageTitle"
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, title: e.target.value }))
+              }
               className="col-span-3"
               required
             />
@@ -173,7 +190,9 @@ export default function GalleryImageModal({ isOpen, onClose, image, onSuccess, c
             <Textarea
               id="imageDescription"
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, description: e.target.value }))
+              }
               className="col-span-3"
               rows={3}
             />
@@ -189,7 +208,7 @@ export default function GalleryImageModal({ isOpen, onClose, image, onSuccess, c
                   {formData.imagePreview ? (
                     <div className="relative w-full h-full">
                       <Image
-                        src={formData.imagePreview || "/placeholder.svg"}
+                        src={formData.imagePreview}
                         alt="Preview"
                         fill
                         className="object-contain p-2"
@@ -198,7 +217,12 @@ export default function GalleryImageModal({ isOpen, onClose, image, onSuccess, c
                         type="button"
                         onClick={(e) => {
                           e.preventDefault()
-                          setFormData({ ...formData, imageFile: null, imagePreview: "", url: "" })
+                          setFormData((prev) => ({
+                            ...prev,
+                            imageFile: null,
+                            imagePreview: "",
+                            url: "",
+                          }))
                         }}
                         className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
                       >
@@ -231,7 +255,9 @@ export default function GalleryImageModal({ isOpen, onClose, image, onSuccess, c
                 <Input
                   id="imageUrl"
                   value={formData.url}
-                  onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, url: e.target.value }))
+                  }
                   placeholder="https://example.com/image.jpg"
                   className="mt-1"
                 />
@@ -239,6 +265,7 @@ export default function GalleryImageModal({ isOpen, onClose, image, onSuccess, c
             </div>
           </div>
         </div>
+
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
             Cancel

@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
 import { X, Upload } from "lucide-react"
@@ -21,7 +20,6 @@ import { TestimonialService, type Testimonial } from "@/lib/services/testimonial
 import { StorageService } from "@/lib/services/storage-service"
 import { toast } from "@/hooks/use-toast"
 
-
 interface TestimonialModalProps {
   isOpen: boolean
   onClose: () => void
@@ -31,19 +29,45 @@ interface TestimonialModalProps {
 
 export default function TestimonialModal({ isOpen, onClose, testimonial, onSuccess }: TestimonialModalProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const imageInputRef = useRef<HTMLInputElement>(null)
+  const isEditing = !!testimonial
+
   const [formData, setFormData] = useState({
-    name: testimonial?.name || "",
-    role: testimonial?.role || "",
-    quote: testimonial?.quote || "",
-    image: testimonial?.image || "",
+    name: "",
+    role: "",
+    quote: "",
+    image: "",
     imageFile: null as File | null,
-    imagePreview: testimonial?.image || "",
-    rating: testimonial?.rating || 5,
+    imagePreview: "",
+    rating: 5,
   })
 
-  // Preview the gradient avatar if no image is provided
-  const [gradientAvatar, setGradientAvatar] = useState<string>("")
+  // Reset form when modal opens
+  useEffect(() => {
+    if (testimonial) {
+      setFormData({
+        name: testimonial.name || "",
+        role: testimonial.role || "",
+        quote: testimonial.quote || "",
+        image: testimonial.image || "",
+        imageFile: null,
+        imagePreview: testimonial.image || "",
+        rating: testimonial.rating || 5,
+      })
+    } else {
+      setFormData({
+        name: "",
+        role: "",
+        quote: "",
+        image: "",
+        imageFile: null,
+        imagePreview: "",
+        rating: 5,
+      })
+    }
+  }, [testimonial, isOpen])
 
+  const [gradientAvatar, setGradientAvatar] = useState<string>("")
   useEffect(() => {
     if (formData.name && !formData.image && !formData.imagePreview) {
       setGradientAvatar(StorageService.generateGradientAvatar(formData.name))
@@ -51,9 +75,6 @@ export default function TestimonialModal({ isOpen, onClose, testimonial, onSucce
       setGradientAvatar("")
     }
   }, [formData.name, formData.image, formData.imagePreview])
-
-  const imageInputRef = useRef<HTMLInputElement>(null)
-  const isEditing = !!testimonial
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -85,40 +106,28 @@ export default function TestimonialModal({ isOpen, onClose, testimonial, onSucce
     try {
       let imageUrl = formData.image
 
-      // Upload new image if provided
       if (formData.imageFile) {
         try {
           const uploadedUrl = await StorageService.uploadImage(formData.imageFile)
-          if (uploadedUrl) {
-            imageUrl = uploadedUrl
-          } else {
-            // If upload fails, use gradient avatar
-            imageUrl = StorageService.generateGradientAvatar(formData.name)
-          }
-        } catch (error) {
-          console.error("Image upload failed:", error)
-          // Use gradient avatar as fallback
+          imageUrl = uploadedUrl || StorageService.generateGradientAvatar(formData.name)
+        } catch {
           imageUrl = StorageService.generateGradientAvatar(formData.name)
         }
       }
 
-      // If no image is provided, generate a gradient avatar
       if (!imageUrl) {
         imageUrl = StorageService.generateGradientAvatar(formData.name)
       }
 
       if (isEditing && testimonial) {
         await TestimonialService.update(testimonial.id, {
-          name: formData.name,
-          role: formData.role,
-          quote: formData.quote,
-          image: imageUrl,
-          rating: formData.rating,
+          name: formData.name || testimonial.name,
+          role: formData.role || testimonial.role,
+          quote: formData.quote || testimonial.quote,
+          image: imageUrl || testimonial.image,
+          rating: formData.rating || testimonial.rating,
         })
-        toast({
-          title: "Success",
-          description: "Testimonial updated successfully!",
-        })
+        toast({ title: "Success", description: "Testimonial updated successfully!" })
       } else {
         await TestimonialService.create({
           name: formData.name,
@@ -127,10 +136,7 @@ export default function TestimonialModal({ isOpen, onClose, testimonial, onSucce
           image: imageUrl,
           rating: formData.rating,
         })
-        toast({
-          title: "Success",
-          description: "Testimonial created successfully!",
-        })
+        toast({ title: "Success", description: "Testimonial created successfully!" })
       }
 
       onSuccess()
@@ -158,9 +164,7 @@ export default function TestimonialModal({ isOpen, onClose, testimonial, onSucce
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Name*
-            </Label>
+            <Label htmlFor="name" className="text-right">Name*</Label>
             <Input
               id="name"
               value={formData.name}
@@ -170,9 +174,7 @@ export default function TestimonialModal({ isOpen, onClose, testimonial, onSucce
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="role" className="text-right">
-              Role
-            </Label>
+            <Label htmlFor="role" className="text-right">Role</Label>
             <Input
               id="role"
               value={formData.role}
@@ -182,9 +184,7 @@ export default function TestimonialModal({ isOpen, onClose, testimonial, onSucce
             />
           </div>
           <div className="grid grid-cols-4 items-start gap-4">
-            <Label htmlFor="quote" className="text-right pt-2">
-              Testimonial*
-            </Label>
+            <Label htmlFor="quote" className="text-right pt-2">Testimonial*</Label>
             <Textarea
               id="quote"
               value={formData.quote}
@@ -205,7 +205,7 @@ export default function TestimonialModal({ isOpen, onClose, testimonial, onSucce
                   {formData.imagePreview ? (
                     <div className="relative w-full h-full">
                       <Image
-                        src={formData.imagePreview || "/placeholder.svg"}
+                        src={formData.imagePreview}
                         alt="Preview"
                         fill
                         className="object-contain p-2"
@@ -224,7 +224,7 @@ export default function TestimonialModal({ isOpen, onClose, testimonial, onSucce
                   ) : gradientAvatar ? (
                     <div className="relative w-full h-full">
                       <Image
-                        src={gradientAvatar || "/placeholder.svg"}
+                        src={gradientAvatar}
                         alt="Gradient Avatar"
                         fill
                         className="object-contain p-2"
@@ -251,9 +251,7 @@ export default function TestimonialModal({ isOpen, onClose, testimonial, onSucce
                 </label>
               </div>
               <div className="mt-2">
-                <Label htmlFor="imageUrl" className="text-sm">
-                  Or provide an image URL:
-                </Label>
+                <Label htmlFor="imageUrl" className="text-sm">Or provide an image URL:</Label>
                 <Input
                   id="imageUrl"
                   value={formData.image}
@@ -268,35 +266,29 @@ export default function TestimonialModal({ isOpen, onClose, testimonial, onSucce
             </div>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="rating" className="text-right">
-              Rating
-            </Label>
-            <div className="col-span-3">
-              <div className="flex items-center">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    onClick={() => setFormData({ ...formData, rating: star })}
-                    className="p-1 focus:outline-none"
+            <Label htmlFor="rating" className="text-right">Rating</Label>
+            <div className="col-span-3 flex items-center">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  type="button"
+                  onClick={() => setFormData({ ...formData, rating: star })}
+                  className="p-1 focus:outline-none"
+                >
+                  <svg
+                    className={`h-6 w-6 ${star <= formData.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
+                    viewBox="0 0 20 20"
                   >
-                    <svg
-                      className={`h-6 w-6 ${star <= formData.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  </button>
-                ))}
-                <span className="ml-2 text-sm text-gray-600">{formData.rating} out of 5</span>
-              </div>
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                </button>
+              ))}
+              <span className="ml-2 text-sm text-gray-600">{formData.rating} out of 5</span>
             </div>
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
+          <Button variant="outline" onClick={onClose}>Cancel</Button>
           <Button onClick={handleSubmit} disabled={isLoading}>
             {isLoading ? "Saving..." : "Save"}
           </Button>

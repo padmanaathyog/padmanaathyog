@@ -53,7 +53,7 @@ export interface Database {
           title: string
           description: string
           url: string
-          category: string
+          category?: string
         }
         Update: {
           id?: number

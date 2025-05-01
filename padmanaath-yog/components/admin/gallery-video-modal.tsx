@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
 import { X, Upload } from "lucide-react"
 import {
@@ -40,6 +40,17 @@ export default function GalleryVideoModal({ isOpen, onClose, video, onSuccess, c
     thumbnailPreview: video?.thumbnail || "",
   })
 
+  useEffect(() => {
+    setFormData({
+      title: video?.title || "",
+      description: video?.description || "",
+      url: video?.url || "",
+      thumbnail: video?.thumbnail || "",
+      thumbnailFile: null,
+      thumbnailPreview: video?.thumbnail || "",
+    })
+  }, [video])
+  
   const thumbnailInputRef = useRef<HTMLInputElement>(null)
   const isEditing = !!video
 
