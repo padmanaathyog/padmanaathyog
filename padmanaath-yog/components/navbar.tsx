@@ -22,6 +22,7 @@ const navLinks = [
       { href: "/blog", label: "Blog" },
       { href: "/events", label: "Events" },
       { href: "/padmanaath-yog", label: "Padmanaath Yog" },
+      { href: "/reviews", label: "Reviews" },
     ],
   },
   {
@@ -163,7 +164,7 @@ export default function Navbar() {
                 </>
               ) : (
                 <Link
-                  href={link.href}
+                  href={link.href || "#"}
                   className={cn(
                     "px-3 py-2 text-sm lg:text-base text-gray-700 hover:text-yoga-burnt transition-colors rounded-md",
                     pathname === link.href && "text-yoga-burnt font-medium",
@@ -240,7 +241,7 @@ export default function Navbar() {
                     </>
                   ) : (
                     <Link
-                      href={link.href}
+                      href={link.href || "#"}
                       className={cn(
                         "px-3 py-2 text-gray-700 hover:text-yoga-burnt transition-colors rounded-md",
                         pathname === link.href && "text-yoga-burnt font-medium",

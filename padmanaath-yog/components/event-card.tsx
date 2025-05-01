@@ -1,6 +1,7 @@
 import Image from "next/image"
 import { Calendar, Clock, MapPin, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 interface EventCardProps {
   title: string
@@ -12,7 +13,9 @@ interface EventCardProps {
   spots: number
 }
 
+
 export default function EventCard({ title, description, image, date, time, location, spots }: EventCardProps) {
+  const googleFormLinnk =process.env.NEXT_PUBLIC_GOOGLE_FORM_LINK;
   return (
     <div className="glass-card overflow-hidden group">
       <div className="relative h-48 w-full">
@@ -51,8 +54,9 @@ export default function EventCard({ title, description, image, date, time, locat
             <span>{spots} spots available</span>
           </div>
         </div>
-
+        <Link href={googleFormLinnk || "#"} className="w-full">
         <Button className="w-full bg-yoga-orange hover:bg-yoga-ochre">Book Now</Button>
+        </Link>
       </div>
     </div>
   )

@@ -15,7 +15,7 @@ export default function EventPopup() {
   const pathname = usePathname()
 
   // Only show on homepage and events page
-  const shouldShowOnPage = pathname === "/" || pathname === "/events" || pathname === "/contact"
+  const shouldShowOnPage = pathname === "/" || pathname === "/contact"
 
   useEffect(() => {
     // Fetch the latest event directly using Supabase
