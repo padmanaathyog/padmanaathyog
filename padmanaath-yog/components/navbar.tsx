@@ -21,14 +21,15 @@ const navLinks = [
       { href: "/gallery", label: "Gallery" },
       { href: "/blog", label: "Blog" },
       { href: "/events", label: "Events" },
+      { href: "/padmanaath-yog", label: "Padmanaath Yog" },
+      { href: "/reviews", label: "Reviews" },
     ],
   },
   {
-    label: "Yoga",
+    label: "Yog",
     dropdown: true,
     items: [
-      { href: "/therapeutic-yog", label: "Therapeutic Yoga" },
-      { href: "/padmanaath-yog", label: "Padmanaath Yoga" },
+      { href: "/therapeutic-yog", label: "Therapeutic Yog" },
     ],
   },
   { href: "/the-learned", label: "The Learned" },
@@ -41,6 +42,7 @@ export default function Navbar() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const pathname = usePathname()
   const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({})
+  const googleFormLink = process.env.NEXT_PUBLIC_GOOGLE_FORMS_URL
 
   // Track scrolling to change navbar appearance
   useEffect(() => {
@@ -163,7 +165,7 @@ export default function Navbar() {
                 </>
               ) : (
                 <Link
-                  href={link.href}
+                  href={link.href || "#"}
                   className={cn(
                     "px-3 py-2 text-sm lg:text-base text-gray-700 hover:text-yoga-burnt transition-colors rounded-md",
                     pathname === link.href && "text-yoga-burnt font-medium",
@@ -175,8 +177,12 @@ export default function Navbar() {
             </div>
           ))}
           <Button asChild className="ml-2 bg-yoga-burnt hover:bg-yoga-lightorange">
-            <Link href="/book-session">Book a Session</Link>
-          </Button>
+  <a href={googleFormLink} target="_blank" rel="noopener noreferrer">
+    Book a Session
+  </a>
+</Button>
+<>{console.log(googleFormLink)}</>
+   
         </nav>
 
         {/* Mobile Navigation Toggle */}
@@ -240,7 +246,7 @@ export default function Navbar() {
                     </>
                   ) : (
                     <Link
-                      href={link.href}
+                      href={link.href || "#"}
                       className={cn(
                         "px-3 py-2 text-gray-700 hover:text-yoga-burnt transition-colors rounded-md",
                         pathname === link.href && "text-yoga-burnt font-medium",
@@ -257,7 +263,8 @@ export default function Navbar() {
                 className="mt-2 bg-yoga-burnt hover:bg-yoga-lightorange w-full"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <Link href="/book-session">Book a Session</Link>
+                  <a href={googleFormLink} target="_blank" rel="noopener noreferrer">
+                  Book a Session </a>
               </Button>
             </nav>
           </motion.div>

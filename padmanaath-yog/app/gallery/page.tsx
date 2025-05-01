@@ -26,8 +26,8 @@ export default function GalleryPage() {
   const currentImagePage = imagePageParam ? Number.parseInt(imagePageParam) : 1
   const currentVideoPage = videoPageParam ? Number.parseInt(videoPageParam) : 1
 
-  const [selectedImage, setSelectedImage] = useState<null | { src: string; title: string; description: string }>(null)
-  const [selectedVideo, setSelectedVideo] = useState<null | { src: string; title: string; description: string }>(null)
+  const [selectedImage, setSelectedImage] = useState<null | { url: string; title: string; description: string }>(null)
+  const [selectedVideo, setSelectedVideo] = useState<null | { url: string; title: string; description: string }>(null)
   const [imageCategory, setImageCategory] = useState("all")
   const [videoCategory, setVideoCategory] = useState("all")
 
@@ -53,8 +53,9 @@ export default function GalleryPage() {
           GalleryService.getVideoCategories(),
         ])
 
-        setImageCategories(["all", ...imgCategories])
-        setVideoCategories(["all", ...vidCategories])
+        // Ensure 'all' is only added once and is at the beginning
+        setImageCategories(["all", ...imgCategories.filter((cat) => cat !== "all")])
+        setVideoCategories(["all", ...vidCategories.filter((cat) => cat !== "all")])
       } catch (error) {
         console.error("Error fetching categories:", error)
         // Don't set error state here, as we'll handle it in the main data fetch
@@ -324,7 +325,7 @@ export default function GalleryPage() {
                     >
                       <div className="relative h-64 w-full">
                         <Image
-                          src={image.src || "/placeholder.svg"}
+                          src={image.url || "/placeholder.svg"}
                           alt={image.title}
                           fill
                           className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -398,9 +399,7 @@ export default function GalleryPage() {
                       <div className="p-4">
                         <div className="flex justify-between items-start mb-2">
                           <h3 className="text-lg font-semibold text-yoga-burnt">{video.title}</h3>
-                          <span className="text-xs bg-yoga-burnt/10 px-2 py-1 rounded text-yoga-burnt">
-                            {video.duration}
-                          </span>
+                          {/* Removed duration display for YouTube videos */}
                         </div>
                         <p className="text-sm text-muted-foreground line-clamp-2">{video.description}</p>
                       </div>
@@ -424,7 +423,7 @@ export default function GalleryPage() {
             {selectedImage && (
               <div className="relative h-[60vh] w-full">
                 <Image
-                  src={selectedImage.src || "/placeholder.svg"}
+                  src={selectedImage.url || "/placeholder.svg"}
                   alt={selectedImage.title}
                   fill
                   className="object-contain"
@@ -443,14 +442,8 @@ export default function GalleryPage() {
             </DialogHeader>
             {selectedVideo && (
               <div className="relative aspect-video w-full">
-                <iframe
-                  src={selectedVideo.src}
-                  title={selectedVideo.title}
-                  className="absolute inset-0 w-full h-full"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
+                <iframe src={`https://www.youtube.com/embed/${selectedVideo.url.split('v=')[1]}`} title={selectedVideo.title} className="absolute inset-0 w-full h-full" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+
               </div>
             )}
           </DialogContent>

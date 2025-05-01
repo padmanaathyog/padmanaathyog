@@ -1,7 +1,9 @@
 "use client"
 import Image from "next/image"
-import { Edit, Eye, Trash2 } from "lucide-react"
+import { format, parseISO } from "date-fns"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Edit, Trash2, Calendar, MapPin, Clock } from "lucide-react"
 import type { Event } from "@/lib/services/event-service"
 
 interface EventsTabProps {
@@ -10,116 +12,135 @@ interface EventsTabProps {
   searchTerm: string
   onEdit: (event: Event) => void
   onDelete: (event: Event) => void
+  editingItemId: number | null
 }
 
-export default function EventsTab({ events, isLoading, searchTerm, onEdit, onDelete }: EventsTabProps) {
-  // Filter events based on search term
-  const filteredEvents =
-    events && Array.isArray(events)
-      ? events.filter(
-          (event) =>
-            event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            event.location.toLowerCase().includes(searchTerm.toLowerCase()),
-        )
-      : []
+export default function EventsTab({ events, isLoading, searchTerm, onEdit, onDelete, editingItemId }: EventsTabProps) {
+  // No filtering by search term anymore
+  const displayedEvents = events
+
+  // Function to format date in a user-friendly way
+  const formatEventDate = (dateString: string | undefined) => {
+    if (!dateString) return "Date not specified"
+
+    try {
+      // Try to parse the date - handle both ISO strings and formatted strings
+      let date: Date
+      if (dateString.includes("T")) {
+        // ISO format
+        date = parseISO(dateString)
+      } else {
+        // Already formatted string like "April 15, 2023"
+        date = new Date(dateString)
+      }
+
+      if (isNaN(date.getTime())) {
+        return dateString // If parsing fails, return the original string
+      }
+
+      return format(date, "EEEE, MMMM d, yyyy")
+    } catch (error) {
+      console.error("Error formatting date:", error)
+      return dateString
+    }
+  }
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center py-12">
+      <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yoga-burnt"></div>
       </div>
     )
   }
 
-  if (!filteredEvents || filteredEvents.length === 0) {
+  if (events.length === 0) {
     return (
-      <div className="text-center py-12 bg-white rounded-lg shadow-sm">
-        <p className="text-gray-500">
-          No events found. {searchTerm ? "Try a different search term." : "Create your first event!"}
-        </p>
+      <div className="text-center py-12">
+        <h3 className="text-lg font-medium text-gray-500">No events found</h3>
+        <p className="text-gray-400 mt-2">Add your first event to get started.</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Location
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Spots</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {filteredEvents.map((event) => (
-              <tr key={event.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="h-10 w-10 flex-shrink-0 mr-3">
-                      <Image
-                        src={event.image || "/placeholder.svg?height=40&width=40"}
-                        alt={event.title}
-                        width={40}
-                        height={40}
-                        className="rounded object-cover"
-                      />
-                    </div>
-                    <div className="text-sm font-medium text-gray-900">{event.title}</div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{event.date}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{event.location}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{event.price}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{event.spots}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div className="flex space-x-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-blue-600 hover:text-blue-800"
-                      onClick={() => onEdit(event)}
-                    >
-                      <Edit size={16} className="mr-1" /> Edit
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-red-600 hover:text-red-800"
-                      onClick={() => onDelete(event)}
-                    >
-                      <Trash2 size={16} className="mr-1" /> Delete
-                    </Button>
-                    <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-800">
-                      <Eye size={16} className="mr-1" /> View
-                    </Button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div className="bg-gray-50 px-4 py-3 border-t border-gray-200 sm:px-6 flex items-center justify-between">
-        <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm text-gray-700">
-              Showing <span className="font-medium">1</span> to{" "}
-              <span className="font-medium">{filteredEvents.length}</span> of{" "}
-              <span className="font-medium">{filteredEvents.length}</span> results
-            </p>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {displayedEvents.map((event) => (
+        <Card
+          key={event.id}
+          className={`overflow-hidden transition-all duration-200 ${
+            editingItemId === event.id ? "ring-2 ring-yoga-burnt" : ""
+          }`}
+        >
+          <div className="relative h-48 w-full">
+            {event.image ? (
+              <Image
+                src={event.image || "/placeholder.svg"}
+                alt={event.title}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+            ) : (
+              <div className="h-full w-full bg-gray-200 flex items-center justify-center text-gray-400">
+                <Calendar size={48} />
+              </div>
+            )}
+            {/* Date badge overlay */}
+            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white p-2">
+              <div className="flex items-center">
+                <Calendar size={16} className="mr-2" />
+                <span className="font-medium">{formatEventDate(event.date)}</span>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+          <CardContent className="p-4">
+            <h3 className="font-semibold text-lg mb-3">{event.title}</h3>
+
+            <div className="flex items-center text-sm text-gray-600 mb-2">
+              <Clock size={14} className="mr-1 flex-shrink-0" />
+              <span>{event.time || "Time not specified"}</span>
+            </div>
+
+            {event.location && (
+              <div className="flex items-center text-sm text-gray-600 mb-3">
+                <MapPin size={14} className="mr-1 flex-shrink-0" />
+                <span>{event.location}</span>
+              </div>
+            )}
+
+            <p className="text-gray-600 text-sm line-clamp-3 mb-4">{event.description}</p>
+
+            <div className="flex justify-between items-center">
+              <div
+                className={`text-xs font-medium px-2 py-1 rounded-full ${
+                  event.is_past ? "bg-gray-200 text-gray-700" : "bg-green-100 text-green-800"
+                }`}
+              >
+                {event.is_past ? "Past Event" : "Upcoming"}
+              </div>
+
+              <div className="flex space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-gray-600 hover:text-yoga-burnt"
+                  onClick={() => onEdit(event)}
+                >
+                  <Edit size={16} className="mr-1" /> Edit
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                  onClick={() => onDelete(event)}
+                >
+                  <Trash2 size={16} className="mr-1" /> Delete
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   )
 }

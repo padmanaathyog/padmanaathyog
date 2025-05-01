@@ -5,29 +5,64 @@ import Image from "next/image"
 import Link from "next/link"
 import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { upcomingEvents } from "@/lib/data"
 import { usePathname } from "next/navigation"
+import { supabase } from "@/lib/supabase"
 
 export default function EventPopup() {
   const [isOpen, setIsOpen] = useState(false)
+  const [latestEvent, setLatestEvent] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
   const pathname = usePathname()
-  const latestEvent = upcomingEvents[0] // Get the most recent event
 
   // Only show on homepage and events page
-  const shouldShowOnPage = pathname === "/" || pathname === "/events" || pathname === "/contact"
+  const shouldShowOnPage = pathname === "/" || pathname === "/contact"
 
   useEffect(() => {
-    // Show popup after a short delay, but only on allowed pages
+    // Fetch the latest event directly using Supabase
+    const fetchLatestEvent = async () => {
+      try {
+        setLoading(true)
+
+        // Get upcoming events (where is_past is false)
+        const { data, error } = await supabase
+          .from("events")
+          .select("*")
+          .eq("is_past", false)
+          .order("date", { ascending: true })
+          .limit(1)
+
+        if (error) {
+          console.error("Error fetching latest event:", error)
+          return
+        }
+
+        if (data && data.length > 0) {
+          setLatestEvent(data[0])
+        }
+      } catch (error) {
+        console.error("Failed to fetch latest event:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
     if (shouldShowOnPage) {
+      fetchLatestEvent()
+    }
+  }, [shouldShowOnPage])
+
+  useEffect(() => {
+    // Show popup after a short delay, but only on allowed pages and if we have an event
+    if (shouldShowOnPage && latestEvent && !loading) {
       const timer = setTimeout(() => {
         setIsOpen(true)
       }, 2000)
 
       return () => clearTimeout(timer)
     }
-  }, [shouldShowOnPage])
+  }, [shouldShowOnPage, latestEvent, loading])
 
-  if (!isOpen || !shouldShowOnPage) return null
+  if (!isOpen || !shouldShowOnPage || !latestEvent) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
@@ -67,8 +102,7 @@ export default function EventPopup() {
             </div>
           </div>
 
-          <div className="flex justify-between items-center">
-            <span className="font-semibold text-yoga-burnt">{latestEvent.price}</span>
+          <div className="flex justify-end">
             <Link href="/events">
               <Button className="bg-yoga-burnt hover:bg-yoga-lightorange">View Details</Button>
             </Link>

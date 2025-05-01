@@ -43,7 +43,7 @@ export interface Database {
           updated_at: string
           title: string
           description: string
-          src: string
+          url: string
           category: string
         }
         Insert: {
@@ -52,8 +52,8 @@ export interface Database {
           updated_at?: string
           title: string
           description: string
-          src: string
-          category: string
+          url: string
+          category?: string
         }
         Update: {
           id?: number
@@ -61,7 +61,7 @@ export interface Database {
           updated_at?: string
           title?: string
           description?: string
-          src?: string
+          url?: string
           category?: string
         }
         Relationships: []
@@ -73,7 +73,7 @@ export interface Database {
           updated_at: string
           title: string
           description: string
-          src: string
+          url: string
           thumbnail: string
           duration: string
           category: string
@@ -84,7 +84,7 @@ export interface Database {
           updated_at?: string
           title: string
           description: string
-          src: string
+          url: string
           thumbnail: string
           duration: string
           category: string
@@ -113,7 +113,6 @@ export interface Database {
           date: string
           time: string
           location: string
-          price: string
           spots: number
           is_past: boolean
         }
@@ -127,7 +126,6 @@ export interface Database {
           date: string
           time: string
           location: string
-          price: string
           spots: number
           is_past?: boolean
         }
@@ -141,7 +139,6 @@ export interface Database {
           date?: string
           time?: string
           location?: string
-          price?: string
           spots?: number
           is_past?: boolean
         }
@@ -186,33 +183,6 @@ export interface Database {
           instructor?: string
           category?: string
           slug?: string
-        }
-        Relationships: []
-      }
-      faq_items: {
-        Row: {
-          id: number
-          created_at: string
-          updated_at: string
-          question: string
-          answer: string
-          category: string
-        }
-        Insert: {
-          id?: number
-          created_at?: string
-          updated_at?: string
-          question: string
-          answer: string
-          category: string
-        }
-        Update: {
-          id?: number
-          created_at?: string
-          updated_at?: string
-          question?: string
-          answer?: string
-          category?: string
         }
         Relationships: []
       }

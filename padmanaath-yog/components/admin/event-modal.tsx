@@ -1,8 +1,7 @@
 "use client"
 
 import type React from "react"
-
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
 import { X, Upload } from "lucide-react"
 import {
@@ -10,15 +9,15 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
   DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { EventService, type Event } from "@/lib/services/event-service"
-import { StorageService } from "@/lib/services/storage-service"
+import { toast } from "@/hooks/use-toast"
 
 interface EventModalProps {
   isOpen: boolean
@@ -38,9 +37,59 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
     date: event?.date || "",
     time: event?.time || "",
     location: event?.location || "",
-    price: event?.price ? event.price.replace("₹", "") : "",
     spots: event?.spots || 20,
   })
+
+  const [imageChanged, setImageChanged] = useState(false)
+  const [timeInput, setTimeInput] = useState("")
+
+  useEffect(() => {
+    if (event) {
+      setFormData({
+        title: event.title || "",
+        description: event.description || "",
+        image: event.image || "",
+        imageFile: null,
+        imagePreview: event.image || "",
+        date: event.date || "",
+        time: event.time || "",
+        location: event.location || "",
+        spots: event.spots || 20,
+      })
+
+      setImageChanged(false)
+
+      let timeValue = ""
+      if (event.time) {
+        const timeParts = event.time.match(/(\d+):(\d+)\s*(AM|PM)/)
+        if (timeParts) {
+          let hours = Number.parseInt(timeParts[1], 10)
+          const minutes = timeParts[2]
+          const ampm = timeParts[3]
+
+          if (ampm === "PM" && hours < 12) hours += 12
+          if (ampm === "AM" && hours === 12) hours = 0
+
+          timeValue = `${hours.toString().padStart(2, "0")}:${minutes}`
+        }
+      }
+      setTimeInput(timeValue)
+    } else {
+      setFormData({
+        title: "",
+        description: "",
+        image: "",
+        imageFile: null,
+        imagePreview: "",
+        date: "",
+        time: "",
+        location: "",
+        spots: 20,
+      })
+      setImageChanged(false)
+      setTimeInput("")
+    }
+  }, [event, isOpen])
 
   const imageInputRef = useRef<HTMLInputElement>(null)
   const isEditing = !!event
@@ -54,43 +103,92 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
           ...formData,
           imageFile: file,
           imagePreview: reader.result as string,
+          image: "",
         })
+        setImageChanged(true)
       }
       reader.readAsDataURL(file)
     }
   }
 
   const handleSubmit = async () => {
+    if (
+      !formData.title.trim() ||
+      !formData.description.trim() ||
+      !formData.date ||
+      !formData.time ||
+      !formData.location
+    ) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields (Title, Description, Date, Time, and Location).",
+        variant: "destructive",
+      })
+      return
+    }
+
     setIsLoading(true)
 
     try {
       let imageUrl = formData.image
 
-      // Upload new image if provided
-      if (formData.imageFile) {
+      if (formData.imageFile && imageChanged) {
         try {
-          const uploadedUrl = await StorageService.uploadImage(formData.imageFile)
-          if (uploadedUrl) {
-            imageUrl = uploadedUrl
+          const uploadedUrl = await EventService.uploadEventImage(formData.imageFile)
+          if (!uploadedUrl) {
+            toast({
+              title: "Image Upload Failed",
+              description: "Failed to upload image. Please try again or use an image URL.",
+              variant: "destructive",
+            })
+            setIsLoading(false)
+            return
+          }
+          imageUrl = uploadedUrl
+
+          if (
+            isEditing &&
+            event?.image &&
+            (event.image.includes("storage.googleapis.com") || event.image.includes("supabase"))
+          ) {
+            try {
+              await EventService.deleteEventImage(event.image)
+            } catch (deleteError) {
+              console.error("Failed to delete old image:", deleteError)
+            }
           }
         } catch (error) {
           console.error("Image upload failed:", error)
-          // Continue with the existing image URL or form submission
+          toast({
+            title: "Image Upload Failed",
+            description: "Failed to upload image. Please try again or use an image URL.",
+            variant: "destructive",
+          })
+          setIsLoading(false)
+          return
         }
+      } else if (formData.image !== event?.image) {
+        setImageChanged(true)
       }
 
-      const formattedPrice = formData.price.startsWith("₹") ? formData.price : `₹${formData.price}`
+      const now = new Date()
+      now.setHours(0, 0, 0, 0)
+
+      const eventDate = new Date(formData.date)
+      eventDate.setHours(0, 0, 0, 0)
+
+      const isPast = eventDate < now
 
       if (isEditing && event) {
         await EventService.update(event.id, {
           title: formData.title,
           description: formData.description,
-          image: imageUrl,
+          ...(imageChanged ? { image: imageUrl } : {}),
           date: formData.date,
           time: formData.time,
           location: formData.location,
-          price: formattedPrice,
           spots: formData.spots,
+          is_past: isPast,
         })
       } else {
         await EventService.create({
@@ -100,8 +198,8 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
           date: formData.date,
           time: formData.time,
           location: formData.location,
-          price: formattedPrice,
           spots: formData.spots,
+          is_past: isPast,
         })
       }
 
@@ -109,8 +207,27 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
       onClose()
     } catch (error) {
       console.error("Error saving event:", error)
+      toast({
+        title: "Error",
+        description: "Failed to save event. Please try again.",
+        variant: "destructive",
+      })
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const formatDateForInput = (dateString: string) => {
+    if (!dateString) return ""
+
+    try {
+      const date = new Date(dateString)
+      if (isNaN(date.getTime())) return ""
+
+      return date.toISOString().split("T")[0]
+    } catch (error) {
+      console.error("Error formatting date:", error)
+      return ""
     }
   }
 
@@ -124,148 +241,108 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="eventTitle" className="text-right">
-              Title
-            </Label>
+          <div>
+            <Label htmlFor="title">Event Title</Label>
             <Input
-              id="eventTitle"
+              id="title"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="col-span-3"
+              placeholder="Enter event title"
             />
           </div>
-          <div className="grid grid-cols-4 items-start gap-4">
-            <Label htmlFor="eventDescription" className="text-right pt-2">
-              Description
-            </Label>
+
+          <div>
+            <Label htmlFor="description">Description</Label>
             <Textarea
-              id="eventDescription"
+              id="description"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="col-span-3"
-              rows={3}
+              placeholder="Enter event description"
             />
           </div>
-          <div className="grid grid-cols-4 items-start gap-4">
-            <Label className="text-right pt-2">Event Image</Label>
-            <div className="col-span-3">
-              <div className="flex items-center justify-center w-full">
-                <label
-                  htmlFor="eventImageUpload"
-                  className="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-                >
-                  {formData.imagePreview ? (
-                    <div className="relative w-full h-full">
-                      <Image
-                        src={formData.imagePreview || "/placeholder.svg?height=160&width=240"}
-                        alt="Preview"
-                        fill
-                        className="object-contain p-2"
-                      />
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          setFormData({ ...formData, imageFile: null, imagePreview: "" })
-                        }}
-                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
-                      >
-                        <X size={16} />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <Upload className="w-8 h-8 mb-3 text-gray-500" />
-                      <p className="mb-2 text-sm text-gray-500">
-                        <span className="font-semibold">Click to upload</span> or drag and drop
-                      </p>
-                      <p className="text-xs text-gray-500">PNG, JPG or WEBP (MAX. 2MB)</p>
-                    </div>
-                  )}
-                  <input
-                    id="eventImageUpload"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageChange}
-                    ref={imageInputRef}
+
+          <div>
+            <Label htmlFor="image">Image</Label>
+            <div className="flex items-center gap-4">
+              <input
+                type="file"
+                ref={imageInputRef}
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+              <Button
+                variant="outline"
+                onClick={() => imageInputRef.current?.click()}
+                // leftIcon={<Upload />}
+              >
+                Upload Image
+              </Button>
+              {formData.imagePreview && (
+                <div className="relative w-16 h-16">
+                  <Image
+                    src={formData.imagePreview}
+                    alt="Event image"
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-md"
                   />
-                </label>
-              </div>
-              <div className="mt-2">
-                <Label htmlFor="imageUrl" className="text-sm">
-                  Or provide an image URL:
-                </Label>
-                <Input
-                  id="imageUrl"
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  placeholder="https://example.com/image.jpg"
-                  className="mt-1"
-                />
-              </div>
+                  <Button
+                    variant="ghost"
+                    className="absolute top-0 right-0 p-1"
+                    onClick={() => setFormData({ ...formData, imagePreview: "", image: "", imageFile: null })}
+                  >
+                    <X size={16} />
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="eventDate" className="text-right">
-              Date
-            </Label>
+
+          <div>
+            <Label htmlFor="date">Event Date</Label>
             <Input
-              id="eventDate"
-              value={formData.date}
+              id="date"
+              type="date"
+              value={formatDateForInput(formData.date)}
               onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              placeholder="July 21, 2023"
-              className="col-span-3"
             />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="eventTime" className="text-right">
-              Time
-            </Label>
+
+          <div>
+            <Label htmlFor="time">Event Time</Label>
             <Input
-              id="eventTime"
-              value={formData.time}
-              onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-              placeholder="5:30 AM - 2:00 PM"
-              className="col-span-3"
+              id="time"
+              type="time"
+              value={timeInput}
+              onChange={(e) => setTimeInput(e.target.value)}
+              onBlur={() => setFormData({ ...formData, time: timeInput })}
             />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="eventLocation" className="text-right">
-              Location
-            </Label>
+
+          <div>
+            <Label htmlFor="location">Event Location</Label>
             <Input
-              id="eventLocation"
+              id="location"
               value={formData.location}
               onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-              className="col-span-3"
+              placeholder="Enter event location"
             />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="eventPrice" className="text-right">
-              Price (₹)
-            </Label>
+
+          <div>
+            <Label htmlFor="spots">Available Spots</Label>
             <Input
-              id="eventPrice"
-              value={formData.price}
-              onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-              className="col-span-3"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="eventSpots" className="text-right">
-              Available Spots
-            </Label>
-            <Input
-              id="eventSpots"
+              id="spots"
               type="number"
-              value={formData.spots.toString()}
-              onChange={(e) => setFormData({ ...formData, spots: Number.parseInt(e.target.value) || 0 })}
-              className="col-span-3"
+              min={1}
+              value={formData.spots}
+              onChange={(e) => setFormData({ ...formData, spots: Math.max(1, Number(e.target.value)) })}
+              placeholder="Enter number of available spots"
             />
           </div>
         </div>
+
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
             Cancel
