@@ -15,7 +15,7 @@ interface EventCardProps {
 
 
 export default function EventCard({ title, description, image, date, time, location, spots }: EventCardProps) {
-  const googleFormLinnk =process.env.NEXT_PUBLIC_GOOGLE_FORM_LINK;
+  const googleFormLink =process.env.NEXT_PUBLIC_GOOGLE_FORMS_URL;
   return (
     <div className="glass-card overflow-hidden group">
       <div className="relative h-48 w-full">
@@ -54,9 +54,9 @@ export default function EventCard({ title, description, image, date, time, locat
             <span>{spots} spots available</span>
           </div>
         </div>
-        <Link href={googleFormLinnk || "#"} className="w-full">
+        <a href={googleFormLink} target="_blank" rel="noopener noreferrer">
         <Button className="w-full bg-yoga-orange hover:bg-yoga-ochre">Book Now</Button>
-        </Link>
+        </a>
       </div>
     </div>
   )
