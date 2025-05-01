@@ -18,7 +18,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { EventService, type Event } from "@/lib/services/event-service"
-import { StorageService } from "@/lib/services/storage-service"
 import { toast } from "@/hooks/use-toast"
 
 interface EventModalProps {
@@ -42,11 +41,29 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
     spots: event?.spots || 20,
   })
 
+  // Track if the image has been changed
+  const [imageChanged, setImageChanged] = useState(false)
+
   // For time input
   const [timeInput, setTimeInput] = useState("")
 
   useEffect(() => {
     if (event) {
+      setFormData({
+        title: event.title || "",
+        description: event.description || "",
+        image: event.image || "",
+        imageFile: null,
+        imagePreview: event.image || "",
+        date: event.date || "",
+        time: event.time || "",
+        location: event.location || "",
+        spots: event.spots || 20,
+      })
+
+      // Reset image changed flag when editing a different event
+      setImageChanged(false)
+
       // Parse the time from "12:00 PM" format to "12:00" for the time input
       let timeValue = ""
       if (event.time) {
@@ -65,9 +82,22 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
       }
       setTimeInput(timeValue)
     } else {
+      // Reset form for new event
+      setFormData({
+        title: "",
+        description: "",
+        image: "",
+        imageFile: null,
+        imagePreview: "",
+        date: "",
+        time: "",
+        location: "",
+        spots: 20,
+      })
+      setImageChanged(false)
       setTimeInput("")
     }
-  }, [event])
+  }, [event, isOpen])
 
   const imageInputRef = useRef<HTMLInputElement>(null)
   const isEditing = !!event
@@ -81,7 +111,10 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
           ...formData,
           imageFile: file,
           imagePreview: reader.result as string,
+          // Clear the image URL since we're using a file now
+          image: "",
         })
+        setImageChanged(true)
       }
       reader.readAsDataURL(file)
     }
@@ -108,10 +141,10 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
     try {
       let imageUrl = formData.image
 
-      // Upload new image if provided
-      if (formData.imageFile) {
+      // Only upload new image if provided and changed
+      if (formData.imageFile && imageChanged) {
         try {
-          const uploadedUrl = await StorageService.uploadImage(formData.imageFile, "events")
+          const uploadedUrl = await EventService.uploadEventImage(formData.imageFile)
           if (!uploadedUrl) {
             toast({
               title: "Image Upload Failed",
@@ -122,6 +155,20 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
             return
           }
           imageUrl = uploadedUrl
+
+          // If we're editing and replacing an image, delete the old one
+          if (
+            isEditing &&
+            event?.image &&
+            (event.image.includes("storage.googleapis.com") || event.image.includes("supabase"))
+          ) {
+            try {
+              await EventService.deleteEventImage(event.image)
+            } catch (deleteError) {
+              console.error("Failed to delete old image:", deleteError)
+              // Continue even if deletion fails
+            }
+          }
         } catch (error) {
           console.error("Image upload failed:", error)
           toast({
@@ -132,6 +179,9 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
           setIsLoading(false)
           return
         }
+      } else if (formData.image !== event?.image) {
+        // If URL was changed but no file was uploaded
+        setImageChanged(true)
       }
 
       // Calculate if the event is in the past
@@ -142,16 +192,13 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
         await EventService.update(event.id, {
           title: formData.title,
           description: formData.description,
-          image: imageUrl,
+          // Only update image if it changed
+          ...(imageChanged ? { image: imageUrl } : {}),
           date: formData.date,
           time: formData.time,
           location: formData.location,
           spots: formData.spots,
           is_past: isPast,
-        })
-        toast({
-          title: "Success",
-          description: "Event updated successfully!",
         })
       } else {
         await EventService.create({
@@ -163,10 +210,6 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
           location: formData.location,
           spots: formData.spots,
           is_past: isPast,
-        })
-        toast({
-          title: "Success",
-          description: "Event created successfully!",
         })
       }
 
@@ -257,6 +300,7 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
                         onClick={(e) => {
                           e.preventDefault()
                           setFormData({ ...formData, imageFile: null, imagePreview: "", image: "" })
+                          setImageChanged(true)
                         }}
                         className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
                       >
@@ -289,7 +333,13 @@ export default function EventModal({ isOpen, onClose, event, onSuccess }: EventM
                 <Input
                   id="imageUrl"
                   value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, image: e.target.value, imageFile: null })
+                    // Mark as changed if the URL is different from the original
+                    if (e.target.value !== event?.image) {
+                      setImageChanged(true)
+                    }
+                  }}
                   placeholder="https://example.com/image.jpg"
                   className="mt-1"
                 />

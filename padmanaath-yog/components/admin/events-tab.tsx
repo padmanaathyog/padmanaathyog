@@ -1,9 +1,9 @@
 "use client"
 import Image from "next/image"
-import { format } from "date-fns"
+import { format, parseISO } from "date-fns"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Edit, Trash2, Calendar, MapPin } from "lucide-react"
+import { Edit, Trash2, Calendar, MapPin, Clock } from "lucide-react"
 import type { Event } from "@/lib/services/event-service"
 
 interface EventsTabProps {
@@ -18,6 +18,32 @@ interface EventsTabProps {
 export default function EventsTab({ events, isLoading, searchTerm, onEdit, onDelete, editingItemId }: EventsTabProps) {
   // No filtering by search term anymore
   const displayedEvents = events
+
+  // Function to format date in a user-friendly way
+  const formatEventDate = (dateString: string | undefined) => {
+    if (!dateString) return "Date not specified"
+
+    try {
+      // Try to parse the date - handle both ISO strings and formatted strings
+      let date: Date
+      if (dateString.includes("T")) {
+        // ISO format
+        date = parseISO(dateString)
+      } else {
+        // Already formatted string like "April 15, 2023"
+        date = new Date(dateString)
+      }
+
+      if (isNaN(date.getTime())) {
+        return dateString // If parsing fails, return the original string
+      }
+
+      return format(date, "EEEE, MMMM d, yyyy")
+    } catch (error) {
+      console.error("Error formatting date:", error)
+      return dateString
+    }
+  }
 
   if (isLoading) {
     return (
@@ -59,37 +85,58 @@ export default function EventsTab({ events, isLoading, searchTerm, onEdit, onDel
                 <Calendar size={48} />
               </div>
             )}
+            {/* Date badge overlay */}
+            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white p-2">
+              <div className="flex items-center">
+                <Calendar size={16} className="mr-2" />
+                <span className="font-medium">{formatEventDate(event.date)}</span>
+              </div>
+            </div>
           </div>
           <CardContent className="p-4">
-            <h3 className="font-semibold text-lg mb-2">{event.title}</h3>
-            <div className="flex items-center text-sm text-gray-500 mb-2">
-              <Calendar size={14} className="mr-1" />
-              <span>{event.start_date ? format(new Date(event.start_date), "MMM d, yyyy") : "Date not specified"}</span>
+            <h3 className="font-semibold text-lg mb-3">{event.title}</h3>
+
+            <div className="flex items-center text-sm text-gray-600 mb-2">
+              <Clock size={14} className="mr-1 flex-shrink-0" />
+              <span>{event.time || "Time not specified"}</span>
             </div>
+
             {event.location && (
-              <div className="flex items-center text-sm text-gray-500 mb-2">
-                <MapPin size={14} className="mr-1" />
+              <div className="flex items-center text-sm text-gray-600 mb-3">
+                <MapPin size={14} className="mr-1 flex-shrink-0" />
                 <span>{event.location}</span>
               </div>
             )}
+
             <p className="text-gray-600 text-sm line-clamp-3 mb-4">{event.description}</p>
-            <div className="flex justify-end space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-gray-600 hover:text-yoga-burnt"
-                onClick={() => onEdit(event)}
+
+            <div className="flex justify-between items-center">
+              <div
+                className={`text-xs font-medium px-2 py-1 rounded-full ${
+                  event.is_past ? "bg-gray-200 text-gray-700" : "bg-green-100 text-green-800"
+                }`}
               >
-                <Edit size={16} className="mr-1" /> Edit
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-red-600 hover:text-red-800 hover:bg-red-50"
-                onClick={() => onDelete(event)}
-              >
-                <Trash2 size={16} className="mr-1" /> Delete
-              </Button>
+                {event.is_past ? "Past Event" : "Upcoming"}
+              </div>
+
+              <div className="flex space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-gray-600 hover:text-yoga-burnt"
+                  onClick={() => onEdit(event)}
+                >
+                  <Edit size={16} className="mr-1" /> Edit
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                  onClick={() => onDelete(event)}
+                >
+                  <Trash2 size={16} className="mr-1" /> Delete
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

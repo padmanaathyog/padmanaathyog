@@ -21,14 +21,14 @@ const navLinks = [
       { href: "/gallery", label: "Gallery" },
       { href: "/blog", label: "Blog" },
       { href: "/events", label: "Events" },
+      { href: "/padmanaath-yog", label: "Padmanaath Yog" },
     ],
   },
   {
-    label: "Yoga",
+    label: "Yog",
     dropdown: true,
     items: [
-      { href: "/therapeutic-yog", label: "Therapeutic Yoga" },
-      { href: "/padmanaath-yog", label: "Padmanaath Yoga" },
+      { href: "/therapeutic-yog", label: "Therapeutic Yog" },
     ],
   },
   { href: "/the-learned", label: "The Learned" },
