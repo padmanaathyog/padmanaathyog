@@ -35,7 +35,11 @@ const navLinks = [
     ],
   },
   { href: "/the-learned", label: "The Learned" },
-  { href: "/contact", label: "Contact" },
+  {
+    href: process.env.NEXT_PUBLIC_CONTACT_FORM_URL || "#",
+    label: "Contact",
+    external: !!process.env.NEXT_PUBLIC_CONTACT_FORM_URL,
+  },
 ]
 
 export default function Navbar() {
@@ -91,6 +95,41 @@ export default function Navbar() {
     setActiveDropdown(activeDropdown === label ? null : label)
   }
 
+  function renderNavLink(link: { 
+    href: string; 
+    label: string; 
+    dropdown?: undefined; 
+    items?: undefined; 
+    external?: boolean 
+  }): React.ReactNode {
+    if (link.external) {
+      return (
+        <a
+          href={link.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={cn(
+            "px-3 py-2 text-sm lg:text-base text-gray-700 hover:text-yoga-burnt transition-colors rounded-md",
+            pathname === link.href && "text-yoga-burnt"
+          )}
+        >
+          {link.label}
+        </a>
+      )
+    }
+
+    return (
+      <Link
+        href={link.href}
+        className={cn(
+          "px-3 py-2 text-sm lg:text-base text-gray-700 hover:text-yoga-burnt transition-colors rounded-md",
+          pathname === link.href && "text-yoga-burnt"
+        )}
+      >
+        {link.label}
+      </Link>
+    )
+  }
   return (
     <header
       className={cn(
@@ -149,7 +188,7 @@ export default function Navbar() {
                         className="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg py-1 z-50"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        {link.items?.map((item) => (
+                        {link.items?.map((item: any) => (
                           <Link
                             key={item.href}
                             href={item.href}
@@ -166,24 +205,17 @@ export default function Navbar() {
                   </AnimatePresence>
                 </>
               ) : (
-                <Link
-                  href={link.href || "#"}
-                  className={cn(
-                    "px-3 py-2 text-sm lg:text-base text-gray-700 hover:text-yoga-burnt transition-colors rounded-md",
-                    pathname === link.href && "text-yoga-burnt font-medium",
-                  )}
-                >
-                  {link.label}
-                </Link>
+                link.href ? renderNavLink(link) : null
               )}
             </div>
           ))}
           <Button asChild className="ml-2 bg-yoga-burnt hover:bg-yoga-lightorange">
-  <a href={googleFormLink} target="_blank" rel="noopener noreferrer">
-    Book a Session
-  </a>
-</Button>
-   
+            <a
+            href={googleFormLink} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            >Book a Session</a>
+          </Button>
         </nav>
 
         {/* Mobile Navigation Toggle */}
@@ -226,7 +258,7 @@ export default function Navbar() {
                             exit={{ opacity: 0, height: 0 }}
                             className="ml-4 mt-1 flex flex-col space-y-1 border-l-2 border-gray-200 pl-4"
                           >
-                            {link.items?.map((item) => (
+                            {link.items?.map((item: any) => (
                               <Link
                                 key={item.href}
                                 href={item.href}
@@ -246,16 +278,9 @@ export default function Navbar() {
                       </AnimatePresence>
                     </>
                   ) : (
-                    <Link
-                      href={link.href || "#"}
-                      className={cn(
-                        "px-3 py-2 text-gray-700 hover:text-yoga-burnt transition-colors rounded-md",
-                        pathname === link.href && "text-yoga-burnt font-medium",
-                      )}
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {link.label}
-                    </Link>
+                    <div className="flex items-center">
+                      {link.href ? renderNavLink(link as { href: string; label: string; external?: boolean }) : null}
+                    </div>
                   )}
                 </div>
               ))}
@@ -264,8 +289,14 @@ export default function Navbar() {
                 className="mt-2 bg-yoga-burnt hover:bg-yoga-lightorange w-full"
                 onClick={() => setIsMenuOpen(false)}
               >
-                  <a href={googleFormLink} target="_blank" rel="noopener noreferrer">
-                  Book a Session </a>
+                <a
+                  href={googleFormLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full text-center text-white"
+                >     
+                Book a Session
+                </a>
               </Button>
             </nav>
           </motion.div>

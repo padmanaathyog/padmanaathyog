@@ -116,10 +116,13 @@ export default function AboutPage() {
               <h3 className="text-xl font-semibold mb-4 text-yoga-leaf">Certifications</h3>
               <ul className="space-y-2 text-muted-foreground">
                 {instructorInfo.certifications.map((cert, index) => (
-                  <li key={index} className="flex flex-col">
-                    <span className="font-medium text-yoga-sage">{cert.title}</span>
-                    <span className="text-sm">{cert.institution}</span>
-                    <span className="text-sm text-muted-foreground">{cert.year}</span>
+                  <li key={index} className="flex items-start">
+                    <span className="mr-2 text-yoga-sage">•</span>
+                    <span>
+                      {cert.title} - {cert.institution}, {cert.year}
+                      {cert.teacher && ` (Teacher: ${cert.teacher})`}
+                      {cert.center && ` (Center: ${cert.center})`}
+                    </span>
                   </li>
                 ))}
               </ul>
