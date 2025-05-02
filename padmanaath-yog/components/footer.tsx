@@ -109,12 +109,12 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} Padmanaath Yog. All rights reserved.
           </p>
           <div className="mt-4 md:mt-0 flex space-x-4 text-sm text-muted-foreground">
-            <Link href="/privacy" className="hover:text-yoga-burnt transition-colors">
+            {/* <Link href="/privacy" className="hover:text-yoga-burnt transition-colors">
               Privacy Policy
             </Link>
             <Link href="/terms" className="hover:text-yoga-burnt transition-colors">
               Terms of Service
-            </Link>
+            </Link> */}
             <Link href="/disclaimer" className="hover:text-yoga-burnt transition-colors">
               Disclaimer
             </Link>

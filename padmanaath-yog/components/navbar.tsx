@@ -23,6 +23,8 @@ const navLinks = [
       { href: "/events", label: "Events" },
       { href: "/padmanaath-yog", label: "Padmanaath Yog" },
       { href: "/reviews", label: "Reviews" },
+      { href: "/about", label: "About" },
+
     ],
   },
   {
@@ -181,7 +183,6 @@ export default function Navbar() {
     Book a Session
   </a>
 </Button>
-<>{console.log(googleFormLink)}</>
    
         </nav>
 
