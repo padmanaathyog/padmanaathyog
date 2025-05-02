@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/pagination"
 
 export default function EventsPage() {
+  const googleFormLink = process.env.NEXT_PUBLIC_GOOGLE_FORMS_URL;
   const searchParams = useSearchParams()
   const upcomingPageParam = searchParams.get("upcomingPage")
   const pastPageParam = searchParams.get("pastPage")
@@ -279,7 +280,7 @@ export default function EventsPage() {
 
                     <Button
                       className="w-full bg-yoga-burnt hover:bg-yoga-lightorange"
-                      onClick={() => window.open("https://forms.gle/YourGoogleFormLink", "_blank")}
+                      onClick={() => window.open(googleFormLink, "_blank")}
                     >
                       Book Now
                     </Button>

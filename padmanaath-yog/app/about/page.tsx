@@ -118,7 +118,11 @@ export default function AboutPage() {
                 {instructorInfo.certifications.map((cert, index) => (
                   <li key={index} className="flex items-start">
                     <span className="mr-2 text-yoga-sage">•</span>
-                    <span>{cert}</span>
+                    <span>
+                      {cert.title} - {cert.institution}, {cert.year}
+                      {cert.teacher && ` (Teacher: ${cert.teacher})`}
+                      {cert.center && ` (Center: ${cert.center})`}
+                    </span>
                   </li>
                 ))}
               </ul>
