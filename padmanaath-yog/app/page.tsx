@@ -39,6 +39,7 @@ const faqItems = [
 ]
 
 export default function Home() {
+  const googleFormLink=process.env.NEXT_PUBLIC_CONTACT_FORM_URL
   return (
     <>
       {/* Hero Section */}
@@ -68,7 +69,8 @@ export default function Home() {
               </p>
               <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-4">
                 <Button size="lg" className="bg-yoga-burnt hover:bg-yoga-lightorange">
-                  Begin Your Journey
+                  <a href={googleFormLink} target="_blank"  >Begin Your Journey</a>
+                  
                 </Button>
                 <Link href="/therapeutic-yog">
                   <Button
@@ -83,7 +85,7 @@ export default function Home() {
             </AnimatedSection>
             <AnimatedSection direction="right" className="relative h-80 md:h-[500px] rounded-2xl overflow-hidden">
               <Image
-                src="/placeholder.svg?height=500&width=800"
+                  src="/heroSection.png?height=500&width=800"
                 alt="Ancient Yoga Practice"
                 fill
                 className="object-cover"
@@ -179,7 +181,7 @@ export default function Home() {
               className="relative h-80 md:h-[500px] rounded-2xl overflow-hidden order-1 md:order-2"
             >
               <Image
-                src="/placeholder.svg?height=500&width=800"
+                src="/Therapeutic Yoga Practice.png?height=500&width=800"
                 alt="Therapeutic Yoga Practice"
                 fill
                 className="object-cover"
@@ -195,7 +197,7 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <AnimatedSection direction="left" className="relative h-80 md:h-[500px] rounded-2xl overflow-hidden">
               <Image
-                src="/placeholder.svg?height=500&width=800"
+                src="/Padmanaath Yoga Practice.png?height=500&width=800"
                 alt="Padmanaath Yoga Practice"
                 fill
                 className="object-cover"
@@ -314,8 +316,8 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <AnimatedSection direction="left" className="relative h-80 md:h-[500px] rounded-2xl overflow-hidden">
               <Image
-                src={instructorInfo.image || "/placeholder.svg"}
-                alt={`Yoga instructor ${instructorInfo.name}`}
+                src={"/Yoga instructor.png?height=500&width=800"}
+                alt={`Yoga instructor `}
                 fill
                 className="object-cover"
               />
