@@ -15,43 +15,47 @@ export const GalleryService = {
   async getAllImages(page = 1, pageSize = 12, category?: string): Promise<{ data: GalleryImage[]; count: number }> {
     try {
       // Build query
-      let query = supabase.from("gallery_images").select("*", { count: "exact" })
-
+      let query = supabase.from("gallery_images").select("*", { count: "exact" });
+  
       // Apply category filter if provided
       if (category && category !== "all") {
-        query = query.eq("category", category)
+        query = query.eq("category", category);
       }
-
-      // Get count first
-      const { count, error: countError } = await query.select("*", { count: "exact", head: true })
-
+  
+      // Get count first (without selecting actual data)
+      const { count, error: countError } = await query;  // We use this to get count
+  
       if (countError) {
-        console.error("Error counting gallery images:", countError)
-        throw new Error(`Failed to count gallery images: ${countError.message}`)
+        console.error("Error counting gallery images:", countError);
+        throw new Error(`Failed to count gallery images: ${countError.message}`);
       }
-
+  
       // Calculate pagination
-      const from = (page - 1) * pageSize
-      const to = from + pageSize - 1
-
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
+  
       // Get paginated data
-      const { data, error } = await query.order("created_at", { ascending: false }).range(from, to)
-
+      const { data, error } = await query
+        .select("*") // Now select the data for pagination
+        .order("created_at", { ascending: false })
+        .range(from, to);
+  
       if (error) {
-        console.error("Error fetching gallery images:", error)
-        throw new Error(`Failed to fetch gallery images: ${error.message}`)
+        console.error("Error fetching gallery images:", error);
+        throw new Error(`Failed to fetch gallery images: ${error.message}`);
       }
-
+  
       return {
         data: data || [],
         count: count || 0,
-      }
+      };
     } catch (error) {
-      console.error("Error in getAllImages:", error)
-      throw error
+      console.error("Error in getAllImages:", error);
+      throw error;
     }
   },
-
+  
+  
   async getImageById(id: number): Promise<GalleryImage | null> {
     try {
       const { data, error } = await supabase.from("gallery_images").select("*").eq("id", id).single()
@@ -189,42 +193,46 @@ export const GalleryService = {
   async getAllVideos(page = 1, pageSize = 9, category?: string): Promise<{ data: GalleryVideo[]; count: number }> {
     try {
       // Build query
-      let query = supabase.from("gallery_videos").select("*", { count: "exact" })
-
+      let query = supabase.from("gallery_videos").select("*", { count: "exact" });
+  
       // Apply category filter if provided
       if (category && category !== "all") {
-        query = query.eq("category", category)
+        query = query.eq("category", category);
       }
-
+  
       // Get count first
-      const { count, error: countError } = await query.select("*", { count: "exact", head: true })
-
+      const { count, error: countError } = await query; // This will give the count directly
+  
       if (countError) {
-        console.error("Error counting gallery videos:", countError)
-        throw new Error(`Failed to count gallery videos: ${countError.message}`)
+        console.error("Error counting gallery videos:", countError);
+        throw new Error(`Failed to count gallery videos: ${countError.message}`);
       }
-
+  
       // Calculate pagination
-      const from = (page - 1) * pageSize
-      const to = from + pageSize - 1
-
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
+  
       // Get paginated data
-      const { data, error } = await query.order("created_at", { ascending: false }).range(from, to)
-
+      const { data, error } = await query
+        .select("*") // Now select the data for pagination
+        .order("created_at", { ascending: false })
+        .range(from, to);
+  
       if (error) {
-        console.error("Error fetching gallery videos:", error)
-        throw new Error(`Failed to fetch gallery videos: ${error.message}`)
+        console.error("Error fetching gallery videos:", error);
+        throw new Error(`Failed to fetch gallery videos: ${error.message}`);
       }
-
+  
       return {
         data: data || [],
         count: count || 0,
-      }
+      };
     } catch (error) {
-      console.error("Error in getAllVideos:", error)
-      throw error
+      console.error("Error in getAllVideos:", error);
+      throw error;
     }
   },
+  
 
   async getVideoById(id: number): Promise<GalleryVideo | null> {
     try {
@@ -370,7 +378,7 @@ export const GalleryService = {
       }
 
       // Extract unique categories
-      const categories = [...new Set(data.map((item) => item.category))]
+      const categories = Array.from(new Set(data.map((item) => item.category)))
       return categories
     } catch (error) {
       console.error("Error in getImageCategories:", error)
@@ -388,7 +396,7 @@ export const GalleryService = {
       }
 
       // Extract unique categories
-      const categories = [...new Set(data.map((item) => item.category))]
+      const categories = Array.from(new Set(data.map((item) => item.category)))
       return categories
     } catch (error) {
       console.error("Error in getVideoCategories:", error)

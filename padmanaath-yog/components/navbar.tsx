@@ -21,10 +21,13 @@ const navLinks = [
       { href: "/blog", label: "Blog" },
       { href: "/events", label: "Events" },
       { href: "/padmanaath-yog", label: "Padmanaath Yog" },
+      { href: "/yoga-protocol", label: "Yoga-Protocol" },
 
     ],
   },
   { href: "/gallery", label: "Gallery" },
+  
+
   {
     label: "Yog",
     dropdown: true,

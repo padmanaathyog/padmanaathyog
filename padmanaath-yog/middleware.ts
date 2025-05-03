@@ -35,37 +35,35 @@ export async function middleware(request: NextRequest) {
     },
   )
 
-  // Refresh session if expired - required for Server Components
-  // https://supabase.com/docs/guides/auth/server-side/nextjs
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-
-  // For admin routes, check if the user is authenticated
-  if (request.nextUrl.pathname.startsWith("/admin-dashboard")) {
-    if (!session) {
-      // Don't redirect if already on the admin dashboard page
-      // This prevents redirect loops
-      if (request.nextUrl.pathname === "/admin-dashboard") {
-        return response
-      }
-
-      return NextResponse.redirect(new URL("/admin-dashboard", request.url))
+  // Fetch session and handle errors
+  try {
+    // @ts-ignore
+    const { data: { session }, error } = await supabase.auth.getSession();
+    if (error) {
+      console.error('Error fetching session:', error);
+      return NextResponse.error(); // Or custom error response
     }
-  }
 
-  return response
+    // For admin routes, check if the user is authenticated
+    if (request.nextUrl.pathname.startsWith("/admin-dashboard")) {
+      if (!session) {
+        // Don't redirect if already on the admin dashboard page
+        if (request.nextUrl.pathname === "/admin-dashboard") {
+          return response
+        }
+        return NextResponse.redirect(new URL("/admin-dashboard", request.url))
+      }
+    }
+
+    return response;
+  } catch (err) {
+    console.error("Middleware error:", err);
+    return NextResponse.error();
+  }
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder
-     */
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 }
