@@ -37,6 +37,7 @@ export async function middleware(request: NextRequest) {
 
   // Fetch session and handle errors
   try {
+    // @ts-ignore
     const { data: { session }, error } = await supabase.auth.getSession();
     if (error) {
       console.error('Error fetching session:', error);
