@@ -98,7 +98,7 @@ export default function YogaProtocolPage() {
           </div>
           <div className="relative h-80 md:h-[500px] rounded-2xl overflow-hidden">
             <Image
-              src="/placeholder.svg?height=500&width=800"
+              src="/Human Anatomy and Yoga.png?height=500&width=800"
               alt="Human Anatomy and Yoga"
               fill
               className="object-cover"
@@ -182,7 +182,7 @@ export default function YogaProtocolPage() {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="relative h-80 md:h-[500px] rounded-2xl overflow-hidden">
             <Image
-              src="/placeholder.svg?height=500&width=800"
+              src="/Customized Yoga Practice.png?height=500&width=800"
               alt="Customized Yoga Practice"
               fill
               className="object-cover"
