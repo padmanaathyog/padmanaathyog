@@ -87,7 +87,7 @@ export default function TestimonialsTab({
                   </div>
                 </div>
               </div>
-              <p className="text-gray-600 text-sm line-clamp-4 mb-2">{testimonial.content}</p>
+              <p className="text-gray-600 text-sm line-clamp-4 mb-2">{testimonial.quote}</p>
               <div className="flex justify-end space-x-2 mt-4">
                 <Button
                   variant="outline"

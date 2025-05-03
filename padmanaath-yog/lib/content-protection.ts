@@ -24,8 +24,8 @@ export function setupContentProtection() {
     // Disable text selection
     document.body.style.userSelect = "none"
     document.body.style.webkitUserSelect = "none"
-    document.body.style.msUserSelect = "none"
-    document.body.style.mozUserSelect = "none"
+    document.body.style.userSelect = "none"
+    document.body.style.userSelect = "none"
 
     // Disable drag and drop for images and videos
     const mediaElements = document.querySelectorAll("img, video")
