@@ -18,15 +18,13 @@ const navLinks = [
     label: "About Us",
     dropdown: true,
     items: [
-      { href: "/gallery", label: "Gallery" },
       { href: "/blog", label: "Blog" },
       { href: "/events", label: "Events" },
       { href: "/padmanaath-yog", label: "Padmanaath Yog" },
-      { href: "/reviews", label: "Reviews" },
-      { href: "/about", label: "About" },
 
     ],
   },
+  { href: "/gallery", label: "Gallery" },
   {
     label: "Yog",
     dropdown: true,
@@ -48,7 +46,7 @@ export default function Navbar() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const pathname = usePathname()
   const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({})
-  const googleFormLink = process.env.NEXT_PUBLIC_GOOGLE_FORMS_URL
+  const googleFormBookLink = process.env.NEXT_PUBLIC_GOOGLE_FORMS_URL
 
   // Track scrolling to change navbar appearance
   useEffect(() => {
@@ -211,7 +209,7 @@ export default function Navbar() {
           ))}
           <Button asChild className="ml-2 bg-yoga-burnt hover:bg-yoga-lightorange">
             <a
-            href={googleFormLink} 
+            href={googleFormBookLink} 
             target="_blank" 
             rel="noopener noreferrer" 
             >Book a Session</a>
@@ -290,7 +288,7 @@ export default function Navbar() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 <a
-                  href={googleFormLink}
+                  href={googleFormBookLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full text-center text-white"

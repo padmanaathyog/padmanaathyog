@@ -10,6 +10,8 @@ export const metadata = {
 }
 
 export default function PadmanaathYogPage() {
+  const googleFormContactLink = process.env.NEXT_PUBLIC_CONTACT_FORM_URL;
+  const googleFormBookLink = process.env.NEXT_PUBLIC_GOOGLE_FORMS_URL;
   return (
     <div className="page-padding">
       {/* Hero Section */}
@@ -234,8 +236,8 @@ export default function PadmanaathYogPage() {
               </p>
             </div>
           </div>
-
-          <div className="mt-8 grid md:grid-cols-3 gap-6">
+          {/* extra pics of padmantah yog will be added when the lab starts  */}
+          {/* <div className="mt-8 grid md:grid-cols-3 gap-6">
             <div className="relative h-48 rounded-xl overflow-hidden">
               <Image src="/placeholder.svg?height=400&width=600" alt="Kokan Coastline" fill className="object-cover" />
               <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/60 to-transparent p-4">
@@ -266,7 +268,7 @@ export default function PadmanaathYogPage() {
                 <h4 className="text-white font-medium">Practice Spaces</h4>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </section>
 
@@ -321,18 +323,23 @@ export default function PadmanaathYogPage() {
             Address the root causes of health issues and discover a new level of vitality.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button size="lg" className="bg-yoga-burnt hover:bg-yoga-lightorange">
-              Book a Session
-            </Button>
-            <Link href="/contact">
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-yoga-burnt text-yoga-burnt hover:bg-yoga-burnt hover:text-white"
-              >
-                Contact Us
-              </Button>
-            </Link>
+          <Link href={googleFormBookLink || ""} target="_blank" passHref>
+                <Button
+                  size="lg"
+                  className="bg-yoga-burnt hover:bg-yoga-lightorange w-full"
+                >
+                  Book a Session
+                </Button>
+                </Link>
+                <Link href={googleFormContactLink || ""} target="_blank" passHref>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-yoga-burnt text-yoga-burnt hover:bg-yoga-burnt hover:text-white w-full"
+                >
+                  Contact Us
+                </Button>
+                </Link>
           </div>
         </div>
       </section>

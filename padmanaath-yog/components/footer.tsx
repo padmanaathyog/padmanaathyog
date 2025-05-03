@@ -15,7 +15,8 @@ export default function Footer() {
               Join us on a journey to balance mind, body, and spirit through the ancient Sanatan practice of yoga in a
               serene, natural environment.
             </p>
-            <div className="flex space-x-4">
+            {/* social media links  */}
+            {/* <div className="flex space-x-4">
               <a
                 href="#"
                 className="text-muted-foreground hover:text-yoga-burnt transition-colors"
@@ -37,7 +38,7 @@ export default function Footer() {
               >
                 <Twitter size={20} />
               </a>
-            </div>
+            </div> */}
           </div>
 
           {/* Quick Links */}
@@ -62,6 +63,9 @@ export default function Footer() {
               <Link href="/events" className="text-muted-foreground hover:text-yoga-burnt transition-colors">
                 Events
               </Link>
+              <Link href="/reviews" className="text-muted-foreground hover:text-yoga-burnt transition-colors">
+                Reviews
+              </Link>
             </nav>
           </div>
 
@@ -69,14 +73,18 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
             <div className="space-y-3">
-              <div className="flex items-start space-x-3">
-                <MapPin size={18} className="text-yoga-burnt mt-0.5" />
-                <span className="text-muted-foreground">Jamsut, Between Chiplun and Guhaghar, Kokan, Maharashtra</span>
-              </div>
-              <div className="flex items-center space-x-3">
+            <div className="flex items-start space-x-3">
+  <MapPin size={45} className="text-yoga-burnt mt-0.5" />
+  <div className="text-muted-foreground">
+    <p><strong>Pune Address:</strong> 4th floor, Ramdhwaj Commercial Complex, Bibvewadi, Pune – 411037</p>
+    <p><strong>Konkan Address:</strong> Ekant Forest Homes, Jamsut, Tq: Guhaghar, Dist: Ratnagiri, Maharashtra – 415703</p>
+  </div>
+</div>
+{/* phone no  */}
+              {/* <div className="flex items-center space-x-3">
                 <Phone size={18} className="text-yoga-burnt" />
                 <span className="text-muted-foreground">+91 98765 43210</span>
-              </div>
+              </div> */}
               <div className="flex items-center space-x-3">
                 <Mail size={18} className="text-yoga-burnt" />
                 <span className="text-muted-foreground">padmanaathyog@gmail.com</span>
@@ -87,7 +95,7 @@ export default function Footer() {
           {/* Studio Hours */}
           <div>
             <h3 className="text-lg font-semibold mb-4">Session Hours</h3>
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Monday - Friday</span>
                 <span className="text-muted-foreground">6:00 AM - 9:00 PM</span>
@@ -100,7 +108,9 @@ export default function Footer() {
                 <span className="text-muted-foreground">Sunday</span>
                 <span className="text-muted-foreground">9:00 AM - 4:00 PM</span>
               </div>
-            </div>
+            </div> */}
+            <span className="text-muted-foreground">comming soon</span>
+
           </div>
         </div>
 

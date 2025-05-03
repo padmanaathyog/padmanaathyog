@@ -85,9 +85,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="scroll-smooth">
+<html lang="en" suppressHydrationWarning className="scroll-smooth">
       <body className={`${roboto.variable} ${lato.variable} ${poppins.variable} font-sans antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="light">
+        {/* ThemeProvider must be a Client Component */}
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <ContentProtection />
           <div className="flex min-h-screen flex-col">
             <Navbar />
@@ -98,5 +99,6 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
+
   )
 }

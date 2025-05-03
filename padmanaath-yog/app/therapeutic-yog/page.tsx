@@ -1,15 +1,17 @@
-import Image from "next/image"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import SectionHeader from "@/components/section-header"
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import SectionHeader from "@/components/section-header";
 
 export const metadata = {
   title: "Therapeutic Yog",
   description:
     "Discover the healing power of therapeutic yoga practices rooted in ancient Sanatan traditions. Address specific health concerns through tailored yoga protocols.",
-}
+};
 
 export default function TherapeuticYogPage() {
+  const googleFormBookLink = process.env.NEXT_PUBLIC_GOOGLE_FORMS_URL;
+  const googleFormContactLink = process.env.NEXT_PUBLIC_CONTACT_FORM_URL;
   return (
     <div className="page-padding">
       {/* Hero Section */}
@@ -18,14 +20,19 @@ export default function TherapeuticYogPage() {
           <h1 className="mb-6 text-yoga-burnt">Therapeutic Yog</h1>
           <div className="mb-8">
             <p className="sanskrit-quote">समदोषः समाग्निश्च समधातु मलक्रियाः</p>
-            <p className="sanskrit-quote">प्रसन्नात्मेंद्रियमनः स्वस्थ इत्यभिधीयते</p>
+            <p className="sanskrit-quote">
+              प्रसन्नात्मेंद्रियमनः स्वस्थ इत्यभिधीयते
+            </p>
             <p className="sanskrit-translation">
-              (Samadoshaḥ samāgniśca samadhātu malakriyāḥ.. Prasannātma-indriya-manaḥ svastha ittyabhidhīyate)
+              (Samadoshaḥ samāgniśca samadhātu malakriyāḥ..
+              Prasannātma-indriya-manaḥ svastha ittyabhidhīyate)
             </p>
             <p className="text-lg text-muted-foreground">
-              A person who has balanced doshas (bodily humors), balanced agni (digestive fire), balanced dhatus (bodily
-              tissues), and proper excretion of waste products, whose mind, senses, and intellect are calm and who is in
-              a state of perfect health, is said to be in a state of health.
+              A person who has balanced doshas (bodily humors), balanced agni
+              (digestive fire), balanced dhatus (bodily tissues), and proper
+              excretion of waste products, whose mind, senses, and intellect are
+              calm and who is in a state of perfect health, is said to be in a
+              state of health.
             </p>
           </div>
         </div>
@@ -41,26 +48,33 @@ export default function TherapeuticYogPage() {
 
           <div className="grid md:grid-cols-3 gap-8">
             <div className="sanatan-card">
-              <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">Finding Your Real Self</h3>
+              <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">
+                Finding Your Real Self
+              </h3>
               <p className="text-muted-foreground">
-                Yoga is a journey of self-discovery, helping you connect with your true nature beyond the physical body
-                and fluctuating mind.
+                Yoga is a journey of self-discovery, helping you connect with
+                your true nature beyond the physical body and fluctuating mind.
               </p>
             </div>
 
             <div className="sanatan-card">
-              <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">Connecting with Nature</h3>
+              <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">
+                Connecting with Nature
+              </h3>
               <p className="text-muted-foreground">
-                Yoga helps establish harmony between your inner nature and the cosmic forces, creating balance and
-                alignment.
+                Yoga helps establish harmony between your inner nature and the
+                cosmic forces, creating balance and alignment.
               </p>
             </div>
 
             <div className="sanatan-card">
-              <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">Perfect Body, Mind & Spirit Wellness</h3>
+              <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">
+                Perfect Body, Mind & Spirit Wellness
+              </h3>
               <p className="text-muted-foreground">
-                Yoga addresses all dimensions of human existence, creating integration and wholeness across physical,
-                mental, and spiritual aspects.
+                Yoga addresses all dimensions of human existence, creating
+                integration and wholeness across physical, mental, and spiritual
+                aspects.
               </p>
             </div>
           </div>
@@ -72,23 +86,32 @@ export default function TherapeuticYogPage() {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="relative h-80 md:h-[500px] rounded-2xl overflow-hidden">
             <Image
-              src="/placeholder.svg?height=500&width=800"
+              src="/Physical Wellness Through Yoga.png?height=500&width=800"
               alt="Physical Wellness Through Yoga"
               fill
               className="object-cover"
             />
           </div>
           <div>
-            <h2 className="text-3xl font-bold mb-4 text-yoga-burnt">The Foundation of Wellness</h2>
+            <h2 className="text-3xl font-bold mb-4 text-yoga-burnt">
+              The Foundation of Wellness
+            </h2>
             <p className="mb-4 text-muted-foreground">
-              Maintaining a fit body and an alert mind is essential for every human being. An alert mind can only thrive
-              in a healthy body. Therefore, preserving optimal physical fitness is of utmost importance.
+              Maintaining a fit body and an alert mind is essential for every
+              human being. An alert mind can only thrive in a healthy body.
+              Therefore, preserving optimal physical fitness is of utmost
+              importance.
             </p>
             <div className="sanatan-border p-4 mb-6">
-              <p className="text-center font-medium text-yoga-burnt">शरीरमाद्यं खलु धर्मसाधनम्</p>
-              <p className="text-center text-sm text-muted-foreground">(Shariramadhyam khalu dharma sadhanam)</p>
+              <p className="text-center font-medium text-yoga-burnt">
+                शरीरमाद्यं खलु धर्मसाधनम्
+              </p>
+              <p className="text-center text-sm text-muted-foreground">
+                (Shariramadhyam khalu dharma sadhanam)
+              </p>
               <p className="text-center text-muted-foreground mt-2">
-                The body is the medium through which one performs their righteous duties.
+                The body is the medium through which one performs their
+                righteous duties.
               </p>
             </div>
             <p className="text-lg font-medium text-yoga-burnt mb-6">
@@ -108,49 +131,63 @@ export default function TherapeuticYogPage() {
 
           <div className="grid md:grid-cols-2 gap-8">
             <div className="sanatan-card">
-              <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">Personalized Assessment</h3>
+              <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">
+                Personalized Assessment
+              </h3>
               <p className="text-muted-foreground mb-4">
-                We begin with a thorough assessment of your current health status, considering physical conditions,
-                mental state, lifestyle factors, and specific health concerns.
+                We begin with a thorough assessment of your current health
+                status, considering physical conditions, mental state, lifestyle
+                factors, and specific health concerns.
               </p>
               <p className="text-muted-foreground">
-                This holistic evaluation helps us understand the root causes of imbalances rather than just addressing
-                symptoms.
+                This holistic evaluation helps us understand the root causes of
+                imbalances rather than just addressing symptoms.
               </p>
             </div>
 
             <div className="sanatan-card">
-              <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">Customized Protocol</h3>
+              <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">
+                Customized Protocol
+              </h3>
               <p className="text-muted-foreground mb-4">
-                Based on your assessment, we design a personalized yoga protocol that addresses your specific needs,
-                incorporating appropriate asanas, pranayama techniques, meditation practices, and lifestyle
-                recommendations.
+                Based on your assessment, we design a personalized yoga protocol
+                that addresses your specific needs, incorporating appropriate
+                asanas, pranayama techniques, meditation practices, and
+                lifestyle recommendations.
               </p>
               <p className="text-muted-foreground">
-                Each protocol is tailored to your current abilities and gradually adjusted as you progress.
+                Each protocol is tailored to your current abilities and
+                gradually adjusted as you progress.
               </p>
             </div>
 
             <div className="sanatan-card">
-              <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">Holistic Integration</h3>
+              <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">
+                Holistic Integration
+              </h3>
               <p className="text-muted-foreground mb-4">
-                Our approach integrates various aspects of traditional yoga with complementary practices from Ayurveda
-                and other ancient healing systems.
+                Our approach integrates various aspects of traditional yoga with
+                complementary practices from Ayurveda and other ancient healing
+                systems.
               </p>
               <p className="text-muted-foreground">
-                This comprehensive methodology addresses physical, mental, emotional, and spiritual dimensions of
-                health.
+                This comprehensive methodology addresses physical, mental,
+                emotional, and spiritual dimensions of health.
               </p>
             </div>
 
             <div className="sanatan-card">
-              <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">Progressive Guidance</h3>
+              <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">
+                Progressive Guidance
+              </h3>
               <p className="text-muted-foreground mb-4">
-                We provide ongoing guidance and support as you progress in your practice, making adjustments to your
-                protocol as needed to address changing needs and evolving health status.
+                We provide ongoing guidance and support as you progress in your
+                practice, making adjustments to your protocol as needed to
+                address changing needs and evolving health status.
               </p>
               <p className="text-muted-foreground">
-                Regular follow-ups ensure that you're practicing correctly and experiencing the intended benefits.
+                Regular follow-ups ensure that you're practicing correctly and
+                experiencing the intended benefits.
               </p>
             </div>
           </div>
@@ -166,7 +203,9 @@ export default function TherapeuticYogPage() {
 
         <div className="grid md:grid-cols-3 gap-6">
           <div className="sanatan-card">
-            <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">Digestive Disorders</h3>
+            <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">
+              Digestive Disorders
+            </h3>
             <ul className="space-y-2 text-muted-foreground">
               <li className="flex items-start">
                 <span className="mr-2 text-yoga-burnt">•</span>
@@ -188,7 +227,9 @@ export default function TherapeuticYogPage() {
           </div>
 
           <div className="sanatan-card">
-            <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">Musculoskeletal Issues</h3>
+            <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">
+              Musculoskeletal Issues
+            </h3>
             <ul className="space-y-2 text-muted-foreground">
               <li className="flex items-start">
                 <span className="mr-2 text-yoga-burnt">•</span>
@@ -210,7 +251,9 @@ export default function TherapeuticYogPage() {
           </div>
 
           <div className="sanatan-card">
-            <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">Stress-Related Conditions</h3>
+            <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">
+              Stress-Related Conditions
+            </h3>
             <ul className="space-y-2 text-muted-foreground">
               <li className="flex items-start">
                 <span className="mr-2 text-yoga-burnt">•</span>
@@ -232,7 +275,9 @@ export default function TherapeuticYogPage() {
           </div>
 
           <div className="sanatan-card">
-            <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">Respiratory Conditions</h3>
+            <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">
+              Respiratory Conditions
+            </h3>
             <ul className="space-y-2 text-muted-foreground">
               <li className="flex items-start">
                 <span className="mr-2 text-yoga-burnt">•</span>
@@ -254,7 +299,9 @@ export default function TherapeuticYogPage() {
           </div>
 
           <div className="sanatan-card">
-            <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">Metabolic Disorders</h3>
+            <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">
+              Metabolic Disorders
+            </h3>
             <ul className="space-y-2 text-muted-foreground">
               <li className="flex items-start">
                 <span className="mr-2 text-yoga-burnt">•</span>
@@ -276,7 +323,9 @@ export default function TherapeuticYogPage() {
           </div>
 
           <div className="sanatan-card">
-            <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">Cardiovascular Health</h3>
+            <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">
+              Cardiovascular Health
+            </h3>
             <ul className="space-y-2 text-muted-foreground">
               <li className="flex items-start">
                 <span className="mr-2 text-yoga-burnt">•</span>
@@ -302,28 +351,45 @@ export default function TherapeuticYogPage() {
       {/* CTA Section */}
       <section className="bg-yoga-burnt/10 py-16 rounded-2xl">
         <div className="container max-w-4xl text-center">
-          <h2 className="text-3xl font-bold mb-4 text-yoga-burnt">Begin Your Healing Journey</h2>
+          <h2 className="text-3xl font-bold mb-4 text-yoga-burnt">
+            Begin Your Healing Journey
+          </h2>
           <p className="text-lg mb-8 max-w-2xl mx-auto text-muted-foreground">
-            Experience the transformative power of therapeutic yoga under the guidance of experienced practitioners. Our
-            personalized approach addresses your specific health concerns and supports your journey to holistic
-            wellness.
+            Experience the transformative power of therapeutic yoga under the
+            guidance of experienced practitioners. Our personalized approach
+            addresses your specific health concerns and supports your journey to
+            holistic wellness.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button size="lg" className="bg-yoga-burnt hover:bg-yoga-lightorange">
-              Book a Consultation
-            </Button>
-            <Link href="/contact">
+            <Link
+              href={googleFormBookLink || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <Button
-                size="lg"
-                variant="outline"
-                className="border-yoga-burnt text-yoga-burnt hover:bg-yoga-burnt hover:text-white"
+              size="lg"
+              className="bg-yoga-burnt hover:bg-yoga-lightorange w-full"
               >
-                Contact Us
+              Book a Consultation
+              </Button>
+            </Link>
+
+            <Link
+              href={googleFormContactLink || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button
+              size="lg"
+              variant="outline"
+              className="border-yoga-burnt text-yoga-burnt hover:bg-yoga-burnt hover:text-white w-full"
+              >
+              Contact Us
               </Button>
             </Link>
           </div>
         </div>
       </section>
     </div>
-  )
+  );
 }
