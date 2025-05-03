@@ -11,6 +11,9 @@ export const metadata = {
 }
 
 export default function YogaProtocolPage() {
+  const googleFormContactLink = process.env.NEXT_PUBLIC_CONTACT_FORM_URL;
+  const googleFormBookLink = process.env.NEXT_PUBLIC_GOOGLE_FORMS_URL;
+
   return (
     <div className="page-padding">
       {/* Hero Section */}
@@ -238,18 +241,23 @@ export default function YogaProtocolPage() {
             practitioners. Begin your journey to holistic health and wellness today.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button size="lg" className="bg-yoga-burnt hover:bg-yoga-lightorange">
-              Book a Session
-            </Button>
-            <Link href="/contact">
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-yoga-burnt text-yoga-burnt hover:bg-yoga-burnt hover:text-white"
-              >
-                Contact Us
-              </Button>
-            </Link>
+          <Link href={googleFormBookLink || ""} target="_blank" passHref>
+                <Button
+                  size="lg"
+                  className="bg-yoga-burnt hover:bg-yoga-lightorange w-full"
+                >
+                  Book a Session
+                </Button>
+                </Link>
+                <Link href={googleFormContactLink || ""} target="_blank" passHref>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-yoga-burnt text-yoga-burnt hover:bg-yoga-burnt hover:text-white w-full"
+                >
+                  Contact Us
+                </Button>
+                </Link>
           </div>
         </div>
       </section>

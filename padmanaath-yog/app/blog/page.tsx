@@ -10,10 +10,9 @@ export default function BlogPage() {
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="relative w-64 h-64 mb-8">
             <Image
-              src="/placeholder.svg?height=256&width=256"
+              src="/heroSection.png?height=500&width=800"
               alt="Coming Soon"
-              width={256}
-              height={256}
+              fill
               className="object-contain"
             />
           </div>
