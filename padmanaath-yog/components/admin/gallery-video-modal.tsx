@@ -141,7 +141,7 @@ export default function GalleryVideoModal({ isOpen, onClose, video, onSuccess, c
         await GalleryService.updateVideo(video.id, {
           title: formData.title,
           description: formData.description,
-          url: formData.url,
+          src: formData.url,
           thumbnail: thumbnailUrl,
         })
         toast({
@@ -149,6 +149,7 @@ export default function GalleryVideoModal({ isOpen, onClose, video, onSuccess, c
           description: "Video updated successfully!",
         })
       } else {
+        // @ts-ignore
         await GalleryService.createVideo({
           title: formData.title,
           description: formData.description,
