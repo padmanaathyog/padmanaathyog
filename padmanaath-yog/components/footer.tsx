@@ -2,6 +2,8 @@ import Link from "next/link"
 import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from "lucide-react"
 
 export default function Footer() {
+  const googleFormContactLink = process.env.NEXT_PUBLIC_CONTACT_FORM_URL;
+
   return (
     <footer className="bg-yoga-burnt/10 border-t border-yoga-burnt/20">
       <div className="container mx-auto py-12 px-4">
@@ -12,7 +14,7 @@ export default function Footer() {
               Padmanaath<span className="text-yoga-brown">Yog</span>
             </Link>
             <p className="text-muted-foreground max-w-xs">
-              Join us on a journey to balance mind, body, and spirit through the ancient Sanatan practice of yoga in a
+              Join us on a journey to balance mind, body, and spirit through the ancient Sanatan practice of yog in a
               serene, natural environment.
             </p>
             {/* social media links  */}
@@ -57,7 +59,7 @@ export default function Footer() {
               <Link href="/blog" className="text-muted-foreground hover:text-yoga-burnt transition-colors">
                 Blog
               </Link>
-              <Link href="/contact" className="text-muted-foreground hover:text-yoga-burnt transition-colors">
+              <Link href={googleFormContactLink || ""} target="_blank" passHref className="text-muted-foreground hover:text-yoga-burnt transition-colors">
                 Contact
               </Link>
               <Link href="/events" className="text-muted-foreground hover:text-yoga-burnt transition-colors">
