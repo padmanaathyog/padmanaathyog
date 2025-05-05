@@ -111,7 +111,8 @@ export default function Footer() {
                 <span className="text-muted-foreground">9:00 AM - 4:00 PM</span>
               </div>
             </div> */}
-            <span className="text-muted-foreground">comming soon</span>
+            
+            <span className="text-muted-foreground">coming soon</span>
 
           </div>
         </div>

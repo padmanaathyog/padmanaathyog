@@ -29,8 +29,8 @@ export default function TherapeuticYogPage() {
           (Samadoshaḥ samāgniśca samadhātu malakriyāḥ..
           Prasannātma-indriya-manaḥ svastha ittyabhidhīyate)
         </p>
-        <p className="text-lg text-muted-foreground">
-          A person who has balanced doshas (bodily humors), balanced agni
+        <p className="text-center text-yoga-burnt font-semibold mt-4 bg-yoga-cream/50 p-4 rounded-lg border border-yoga-burnt/20">
+        A person who has balanced doshas (bodily humors), balanced agni
           (digestive fire), balanced dhatus (bodily tissues), and proper
           excretion of waste products, whose mind, senses, and intellect are
           calm and who is in a state of perfect health, is said to be in a
@@ -111,7 +111,7 @@ export default function TherapeuticYogPage() {
           <p className="text-center text-sm text-muted-foreground">
           (Shariramadhyam khalu dharma sadhanam)
           </p>
-          <p className="text-center text-muted-foreground mt-2">
+          <p className="text-center text-yoga-burnt font-semibold mt-4 bg-yoga-cream/50 p-4 rounded-lg border border-yoga-burnt/20">
           The body is the medium through which one performs their
           righteous duties.
           </p>

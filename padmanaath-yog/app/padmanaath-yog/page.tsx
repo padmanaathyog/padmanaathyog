@@ -100,12 +100,12 @@ export default function PadmanaathYogPage() {
 
         <div className="sanatan-border p-4 mb-6">
           <p className="text-center font-medium text-yoga-burnt">
-          सर्वरोगाः प्रजायन्ते जायन्ते मलसन्चयात्
+          सर्व रोगाः प्रजायन्ते जायन्ते मलसन्चायात
           </p>
           <p className="text-center text-sm text-muted-foreground">
           (Sarva rogaaḥ prajāyante jāyante malasanchayāt)
           </p>
-          <p className="text-center text-muted-foreground mt-2">
+          <p className="text-center text-yoga-burnt font-semibold mt-4 bg-yoga-cream/50 p-4 rounded-lg border border-yoga-burnt/20">
           All diseases arise due to the accumulation of waste products
           (toxins) in the body.
           </p>
