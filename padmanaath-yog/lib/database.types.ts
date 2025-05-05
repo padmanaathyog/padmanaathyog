@@ -95,7 +95,7 @@ export interface Database {
           updated_at?: string
           title?: string
           description?: string
-          src?: string
+          url?: string
           thumbnail?: string
           duration?: string
           category?: string

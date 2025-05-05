@@ -1,9 +1,9 @@
 export const yogaClasses = [
   {
     id: 1,
-    title: "Therapeutic Yoga",
+    title: "Therapeutic Yog",
     description:
-      "A gentle approach to yoga designed to support physical, mental, and emotional healing. Uses tailored techniques to address specific health issues and promote overall well-being.",
+      "A gentle approach to yog designed to support physical, mental, and emotional healing. Uses tailored techniques to address specific health issues and promote overall well-being.",
     image: "/placeholder.svg?height=400&width=600",
     level: "All Levels",
     duration: "60 min",
@@ -16,9 +16,9 @@ export const yogaClasses = [
   },
   {
     id: 2,
-    title: "Padmanaath Yoga",
+    title: "Padmanaath Yog",
     description:
-      "A specialized yoga protocol focusing on digestive health and overall wellness. Combines traditional practices with modern understanding to address the root cause of many health issues.",
+      "A specialized yog protocol focusing on digestive health and overall wellness. Combines traditional practices with modern understanding to address the root cause of many health issues.",
     image: "/placeholder.svg?height=400&width=600",
     level: "All Levels",
     duration: "75 min",
@@ -230,11 +230,11 @@ export const upcomingEvents = [
 
 export const instructorInfo = {
   name: "Yog Sadhak Umesh",
-  title: "Certified Yoga Therapist, Ayush Mantralaya",
+  title: "Certified Yog Therapist, Ayush Mantralaya",
   image: "/placeholder.svg?height=600&width=500",
   age: 62,
   qualification: "Chemical Engineer (1984)",
-  bio: "Yog Sadhak Umesh is a 62-year-old Chemical Engineer from the 1984 batch who transitioned from a successful career as a self-employed entrepreneur with several registered patents to becoming a dedicated yoga practitioner and teacher. With over 20 years of yoga practice, he has studied under various masters to develop a comprehensive understanding of traditional yogic practices.\n\nHis journey in yoga began in 1991 with distance learning from Dr. Mrs. Suman Seth, followed by more formal training. He completed the Yog Teacher's Course from Vashishtha Yog Ashram in Ahmedabad under Yog Guru Dheeraj on March 6, 2022. Further enhancing his credentials, he became a certified Yog Protocol Instructor from Ayush Mantralaya's Yoga Certification Board on April 14, 2024, at Shri Ambika Yog Kutir. He then advanced to become a certified Yog Therapist from the same institution on March 9, 2025.\n\nYog Sadhak Umesh has been actively promoting the importance of yoga for healthy living both in India and internationally. His approach combines traditional yogic wisdom with modern understanding, making ancient practices accessible and relevant for contemporary health challenges.",
+  bio: "Yog Sadhak Umesh is a 62-year-old Chemical Engineer from the 1984 batch who transitioned from a successful career as a self-employed entrepreneur with several registered patents to becoming a dedicated yog practitioner and teacher. With over 20 years of yog practice, he has studied under various masters to develop a comprehensive understanding of traditional yogic practices.\n\nHis journey in yog began in 1991 with distance learning from Dr. Mrs. Suman Seth, followed by more formal training. He completed the Yog Teacher's Course from Vashishtha Yog Ashram in Ahmedabad under Yog Guru Dheeraj on March 6, 2022. Further enhancing his credentials, he became a certified Yog Protocol Instructor from Ayush Mantralaya's Yog Certification Board on April 14, 2024, at Shri Ambika Yog Kutir. He then advanced to become a certified Yog Therapist from the same institution on March 9, 2025.\n\nYog Sadhak Umesh has been actively promoting the importance of yog for healthy living both in India and internationally. His approach combines traditional yogic wisdom with modern understanding, making ancient practices accessible and relevant for contemporary health challenges.",
   certifications: [
     {
       title: "Distant Yog",
@@ -249,13 +249,13 @@ export const instructorInfo = {
     },
     {
       title: "Yog Protocol Instructor",
-      institution: "Ayush Mantralaya, Yoga Certification Board",
+      institution: "Ayush Mantralaya, Yog Certification Board",
       year: "April 14, 2024",
       center: "Shri Ambika Yog Kutir",
     },
     {
       title: "Yog Therapist",
-      institution: "Ayush Mantralaya, Yoga Certification Board",
+      institution: "Ayush Mantralaya, Yog Certification Board",
       year: "March 9, 2025",
       center: "Shri Ambika Yog Kutir",
     },
@@ -419,24 +419,24 @@ export const galleryItems = {
 export const yogaProtocol = {
   components: [
     {
-      title: "Ashtanga Yoga",
-      description: "The eight-limbed path outlined by Patanjali in the Yoga Sutras",
+      title: "Ashtanga Yog",
+      description: "The eight-limbed path outlined by Patanjali in the Yog Sutras",
       elements: ["Yama", "Niyama", "Asana", "Pranayama", "Pratyahara", "Dharana", "Dhyana", "Samadhi"],
     },
     {
-      title: "Hatha Yoga Pradipika",
+      title: "Hatha Yog Pradipika",
       description: "Traditional practices for physical purification and energy control",
       elements: ["Asanas", "Shatkarma", "Pranayama", "Mudras", "Bandhas"],
     },
     {
       title: "Gheranda Samhita",
-      description: "Seven-fold path to yoga perfection",
+      description: "Seven-fold path to yog perfection",
       elements: ["Shatkarma", "Asana", "Mudra", "Pratyahara", "Pranayama", "Dhyana", "Samadhi"],
     },
     {
       title: "Bhagavad Gita",
       description: "Spiritual wisdom and guidance for yogic living",
-      elements: ["Karma Yoga", "Bhakti Yoga", "Jnana Yoga", "Raja Yoga"],
+      elements: ["Karma Yog", "Bhakti Yog", "Jnana Yog", "Raja Yog"],
     },
     {
       title: "Ayurvedic Principles",
