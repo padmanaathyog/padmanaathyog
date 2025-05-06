@@ -233,7 +233,7 @@ export default function Navbar() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden glass overflow-hidden"
+            className="md:hidden bg-white shadow-lg overflow-hidden"
           >
             <nav className="container mx-auto px-4 py-4 flex flex-col space-y-2">
               {navLinks.map((link) => (
@@ -242,7 +242,7 @@ export default function Navbar() {
                     <>
                       <button
                         onClick={(e) => toggleDropdown(e, link.label)}
-                        className="px-3 py-2 text-gray-700 hover:text-yoga-burnt transition-colors rounded-md flex justify-between items-center"
+                        className="px-3 py-2 text-base text-gray-700 hover:text-yoga-burnt transition-colors rounded-md flex justify-between items-center"
                         aria-expanded={activeDropdown === link.label}
                       >
                         {link.label}
@@ -264,11 +264,12 @@ export default function Navbar() {
                                 key={item.href}
                                 href={item.href}
                                 className={cn(
-                                  "px-3 py-2 text-gray-700 hover:text-yoga-burnt transition-colors rounded-md",
+                                  "px-3 py-2 text-base text-gray-700 hover:text-yoga-burnt transition-colors rounded-md",
                                   pathname === item.href && "text-yoga-burnt font-medium",
                                 )}
                                 onClick={() => {
                                   setIsMenuOpen(false)
+                                  setActiveDropdown(null)
                                 }}
                               >
                                 {item.label}
@@ -294,15 +295,16 @@ export default function Navbar() {
                   href={googleFormBookLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full text-center text-white"
-                >     
-                Book a Session
+                  className="w-full text-center text-white text-base"
+                >
+                  Book a Session
                 </a>
               </Button>
             </nav>
           </motion.div>
         )}
       </AnimatePresence>
+      
     </header>
   )
 }

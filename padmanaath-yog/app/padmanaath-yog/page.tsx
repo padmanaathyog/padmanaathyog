@@ -111,11 +111,13 @@ export default function PadmanaathYogPage() {
           </p>
         </div>
 
-        <p className="mb-6 text-muted-foreground">
+        <p className=" text-muted-foreground">
           Common digestive system disorders include lack of appetite,
           dysphagia, GERD, ulcers, bloating, flatulence, IBS, and
-          constipation. Correcting digestive system function is essential
-          for healthy living.
+          constipation.
+        </p>
+        <p className="mb-6 text-muted-foreground">
+          Correcting digestive system function is essential for healthy living.
         </p>
         </div>
         <div className="relative h-80 md:h-[500px] rounded-2xl overflow-hidden">

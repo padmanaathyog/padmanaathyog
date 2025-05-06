@@ -44,9 +44,9 @@ export default function Home() {
   return (
     <>
       {/* Hero Section - REDESIGNED */}
-      <section className="relative min-h-screen flex items-center justify-center pt-20">
-        <div className="container relative z-10 px-4 py-20">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+      <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-x-hidden">
+        <div className="container relative z-10 px-4 py-20 max-w-full">
+          <div className="grid md:grid-cols-2 gap-12 items-center overflow-x-hidden">
             <div className="text-center md:text-left">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-yoga-burnt">
                 Join us on a journey to balance mind, body, and spirit through the ancient Sanatan practice of yog.
@@ -91,7 +91,7 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <AnimatedSection direction="left" className="text-center md:text-left">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-yoga-burnt">
-                Let us pay obeisance to Yog and its roots
+                Let us pay respects to Yog and its roots
               </h1>
               <div className="bullet-list text-left mb-8">
                 <p className="text-lg md:text-xl mb-4 text-muted-foreground">
@@ -184,23 +184,18 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="bullet-list mb-6">
-                <p className="mb-2 text-muted-foreground">
-                  Finding your real self is yog. Connecting with nature is yog. Perfect body, mind and spirit wellness
-                  is yog.
-                </p>
-                <ul className="staggered-container pl-4">
-                  <li className="staggered-item text-muted-foreground">
-                    Maintaining a fit body and an alert mind is essential for every human being
-                  </li>
-                  <li className="staggered-item text-muted-foreground">
-                    An alert mind can only thrive in a healthy body
-                  </li>
-                  <li className="staggered-item text-muted-foreground">
-                    Therefore, preserving optimal physical fitness is of utmost importance
-                  </li>
-                </ul>
-              </div>
+              <div className="bullet-list space-y-2">
+  <p className="text-muted-foreground">Finding your real self is yog.</p>
+  <p className="text-muted-foreground">Connecting with nature is yog.</p>
+  <p className="text-muted-foreground">Perfect body, mind and spirit wellness is yog.</p>
+  
+  <ul className="list-disc pl-6 space-y-1 text-muted-foreground">
+    <li>Maintaining a fit body and an alert mind is essential for every human being</li>
+    <li>An alert mind can only thrive in a healthy body</li>
+    <li>Therefore, preserving optimal physical fitness is of utmost importance</li>
+  </ul>
+</div>
+
 
               <p className="mb-6 font-medium text-yoga-burnt">
                 शरीरमाद्यं खलु धर्मसाधनम् - The body is the medium through which one performs their righteous duties.
@@ -266,7 +261,7 @@ export default function Home() {
                   Unhealthy digestive system is the root cause of all other diseases and disorders.
                 </p>
                 <p className="mb-4 font-medium text-yoga-burnt">
-                  सर्वरोगाः प्रजायन्ते जायन्ते मलसन्चयात् - All diseases arise due to the accumulation of waste products
+                  सर्वरोगाः प्रजायन्ते जायन्ते मलसन्चायात - All diseases arise due to the accumulation of waste products
                   (toxins) in the body.
                 </p>
               </div>
@@ -309,9 +304,12 @@ export default function Home() {
 
                 <div>
                   <h4 className="text-lg font-medium mb-3 text-yoga-burnt">Benefits of Learning and Doing it Right</h4>
-                  <p className="mb-2 font-medium text-yoga-burnt text-sm">
-                    प्राणायामेन युक्तेन, सर्वरोगक्षयो भवेत् | अयुक्ताभ्यासयोगेन, सर्वरोगस्य संभवः
-                  </p>
+                    <p className="mb-2 font-medium text-yoga-burnt text-sm">
+                    प्राणायामेन युक्तेन, सर्वरोगक्षयो भवेत् |
+                    </p>
+                    <p className="mb-2 font-medium text-yoga-burnt text-sm">
+                    अयुक्ताभ्यासयोगेन, सर्वरोगस्य संभवः
+                    </p>
                   <p className="mb-4 text-sm text-muted-foreground">
                     By practicing Pranayama (breath control) properly, all diseases are destroyed. But by improper
                     practice, all diseases are possible.
