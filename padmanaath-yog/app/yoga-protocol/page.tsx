@@ -58,49 +58,57 @@ export default function YogaProtocolPage() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            <div className="sanatan-card">
-              <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">Foundational Practices</h3>
-              <p className="text-muted-foreground mb-4">
-                The core practices that form the foundation of our protocol include:
-              </p>
-              <ul className="space-y-2">
-                <li className="flex items-start">
-                  <span className="mr-2 text-yoga-burnt">•</span>
-                  <span>
-                    <strong className="text-yoga-brown">Yama & Niyama:</strong> Ethical principles and personal
-                    observances that guide behavior and lifestyle
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2 text-yoga-burnt">•</span>
-                  <span>
-                    <strong className="text-yoga-brown">Asana:</strong> Physical postures that develop strength,
-                    flexibility, and balance
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2 text-yoga-burnt">•</span>
-                  <span>
-                    <strong className="text-yoga-brown">Pranayama:</strong> Breath control techniques that regulate
-                    vital energy
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2 text-yoga-burnt">•</span>
-                  <span>
-                    <strong className="text-yoga-brown">Pratyahara:</strong> Withdrawal of the senses to prepare for
-                    meditation
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2 text-yoga-burnt">•</span>
-                  <span>
-                    <strong className="text-yoga-brown">Dharana & Dhyana:</strong> Concentration and meditation
-                    practices
-                  </span>
-                </li>
-              </ul>
-            </div>
+          <div className="sanatan-card">
+  <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">Foundational Practices</h3>
+  <p className="text-muted-foreground mb-4">
+    The core practices that form the foundation of our protocol include:
+  </p>
+  <ul className="space-y-2">
+    <li className="flex items-start">
+      <span className="mr-2 text-yoga-burnt">•</span>
+      <span>
+        <strong className="text-yoga-brown">Yama & Niyama:</strong> Ethical principles and personal
+        observances that guide behavior and lifestyle
+      </span>
+    </li>
+    <li className="flex items-start">
+      <span className="mr-2 text-yoga-burnt">•</span>
+      <span>
+        <strong className="text-yoga-brown">Asana:</strong> Physical postures that develop strength,
+        flexibility, and balance
+      </span>
+    </li>
+    <li className="flex items-start">
+      <span className="mr-2 text-yoga-burnt">•</span>
+      <span>
+        <strong className="text-yoga-brown">Pranayama:</strong> Breath control techniques that regulate
+        vital energy
+      </span>
+    </li>
+    <li className="flex items-start">
+      <span className="mr-2 text-yoga-burnt">•</span>
+      <span>
+        <strong className="text-yoga-brown">Pratyahara:</strong> Withdrawal of the senses to prepare for
+        meditation
+      </span>
+    </li>
+    <li className="flex items-start">
+      <span className="mr-2 text-yoga-burnt">•</span>
+      <span>
+        <strong className="text-yoga-brown">Dharana & Dhyana:</strong> Concentration and meditation
+        practices
+      </span>
+    </li>
+    <li className="flex items-start">
+      <span className="mr-2 text-yoga-burnt">•</span>
+      <span>
+        <strong className="text-yoga-brown">Samadhi:</strong> The ultimate state of spiritual absorption and unity
+        with the self
+      </span>
+    </li>
+  </ul>
+</div>
+
 
             <div className="sanatan-card">
               <h3 className="text-xl font-semibold mb-3 text-yoga-burnt">Supportive Practices</h3>

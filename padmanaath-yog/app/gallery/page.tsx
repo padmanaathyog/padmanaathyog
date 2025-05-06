@@ -25,6 +25,7 @@ export default function GalleryPage() {
   const videoPageParam = searchParams.get("videoPage")
   const currentImagePage = imagePageParam ? Number.parseInt(imagePageParam) : 1
   const currentVideoPage = videoPageParam ? Number.parseInt(videoPageParam) : 1
+  
 
   const [selectedImage, setSelectedImage] = useState<null | { url: string; title: string; description: string }>(null)
   const [selectedVideo, setSelectedVideo] = useState<null | { url: string; title: string; description: string }>(null)
@@ -435,19 +436,51 @@ export default function GalleryPage() {
 
         {/* Video Lightbox */}
         <Dialog open={!!selectedVideo} onOpenChange={() => setSelectedVideo(null)}>
-          <DialogContent className="max-w-4xl">
-            <DialogHeader>
-              <DialogTitle className="text-yoga-burnt">{selectedVideo?.title}</DialogTitle>
-              <DialogDescription>{selectedVideo?.description}</DialogDescription>
-            </DialogHeader>
-            {selectedVideo && (
-              <div className="relative aspect-video w-full">
-                <iframe src={`https://www.youtube.com/embed/${selectedVideo.url.split('v=')[1]}`} title={selectedVideo.title} className="absolute inset-0 w-full h-full" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+  <DialogContent className="max-w-4xl">
+    <DialogHeader>
+      <DialogTitle className="text-yoga-burnt">{selectedVideo?.title}</DialogTitle>
+      <DialogDescription>{selectedVideo?.description}</DialogDescription>
+    </DialogHeader>
+    {selectedVideo && (
+      <div className="relative aspect-video w-full">
+        {
+  (() => {
+    let videoId = null;
 
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
+    try {
+      const url = new URL(selectedVideo.url);
+
+      if (url.hostname === 'youtu.be') {
+        // Handle shared short URL: https://youtu.be/VIDEO_ID
+        videoId = url.pathname.slice(1);
+      } else if (url.hostname.includes('youtube.com')) {
+        // Handle full URL: https://www.youtube.com/watch?v=VIDEO_ID
+        videoId = new URLSearchParams(url.search).get('v');
+      }
+    } catch (e) {
+      console.error('Invalid YouTube URL', selectedVideo.url);
+    }
+
+    if (!videoId) return null;
+
+    return (
+      <iframe
+        src={`https://www.youtube.com/embed/${videoId}?rel=0`}
+        title={selectedVideo.title}
+        className="absolute inset-0 w-full h-full"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      ></iframe>
+    );
+  })()
+}
+
+      </div>
+    )}
+  </DialogContent>
+</Dialog>
+
 
         <div className="bg-yoga-cream p-8 rounded-2xl text-center mt-16">
           <h2 className="text-2xl font-bold mb-4 text-yoga-burnt">Disclaimer</h2>
