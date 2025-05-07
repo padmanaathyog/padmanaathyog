@@ -222,7 +222,7 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <AnimatedSection direction="left" className="relative h-80 md:h-[500px] rounded-2xl overflow-hidden">
               <Image
-                src="/Padmanaath Yoga Practice.jpeg?height=500&width=800"
+                src="/Padmanaath Section.png?height=500&width=800"
                 alt="Padmanaath Yog Practice"
                 fill
                 className="object-cover"

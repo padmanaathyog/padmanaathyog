@@ -1,8 +1,9 @@
 import Link from "next/link"
-import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from "lucide-react"
+import Image from "next/image"
+import { Mail, MapPin } from "lucide-react"
 
 export default function Footer() {
-  const googleFormContactLink = process.env.NEXT_PUBLIC_CONTACT_FORM_URL;
+  const googleFormContactLink = process.env.NEXT_PUBLIC_CONTACT_FORM_URL
 
   return (
     <footer className="bg-yoga-burnt/10 border-t border-yoga-burnt/20">
@@ -59,7 +60,11 @@ export default function Footer() {
               <Link href="/blog" className="text-muted-foreground hover:text-yoga-burnt transition-colors">
                 Blog
               </Link>
-              <Link href={googleFormContactLink || ""} target="_blank" passHref className="text-muted-foreground hover:text-yoga-burnt transition-colors">
+              <Link
+                href={googleFormContactLink || ""}
+                target="_blank"
+                className="text-muted-foreground hover:text-yoga-burnt transition-colors"
+              >
                 Contact
               </Link>
               <Link href="/events" className="text-muted-foreground hover:text-yoga-burnt transition-colors">
@@ -68,6 +73,12 @@ export default function Footer() {
               <Link href="/reviews" className="text-muted-foreground hover:text-yoga-burnt transition-colors">
                 Reviews
               </Link>
+              {/* <Link href="/terms" className="text-muted-foreground hover:text-yoga-burnt transition-colors">
+                Terms of Service
+              </Link>
+              <Link href="/privacy" className="text-muted-foreground hover:text-yoga-burnt transition-colors">
+                Privacy Policy
+              </Link> */}
             </nav>
           </div>
 
@@ -75,14 +86,19 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
             <div className="space-y-3">
-            <div className="flex items-start space-x-3">
-  <MapPin size={45} className="text-yoga-burnt mt-0.5" />
-  <div className="text-muted-foreground">
-    <p><strong>Pune Address:</strong> 4th floor, Ramdhwaj Commercial Complex, Bibvewadi, Pune – 411037</p>
-    <p><strong>Konkan Address:</strong> Ekant Forest Homes, Jamsut, Tq: Guhaghar, Dist: Ratnagiri, Maharashtra – 415703</p>
-  </div>
-</div>
-{/* phone no  */}
+              <div className="flex items-start space-x-3">
+                <MapPin size={45} className="text-yoga-burnt mt-0.5" />
+                <div className="text-muted-foreground">
+                  <p>
+                    <strong>Pune Address:</strong> 4th floor, Ramdhwaj Commercial Complex, Bibvewadi, Pune – 411037
+                  </p>
+                  <p>
+                    <strong>Konkan Address:</strong> Ekant Forest Homes, Jamsut, Tq: Guhaghar, Dist: Ratnagiri,
+                    Maharashtra – 415703
+                  </p>
+                </div>
+              </div>
+              {/* phone no  */}
               {/* <div className="flex items-center space-x-3">
                 <Phone size={18} className="text-yoga-burnt" />
                 <span className="text-muted-foreground">+91 98765 43210</span>
@@ -94,26 +110,25 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Studio Hours */}
+          {/* QR Code Section */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Session Hours</h3>
-            {/* <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Monday - Friday</span>
-                <span className="text-muted-foreground">6:00 AM - 9:00 PM</span>
+            <h3 className="text-lg font-semibold mb-4">Connect With Us</h3>
+            <div className="flex flex-col items-center space-y-3">
+              <div className="bg-white p-2 rounded-lg shadow-md">
+                <Image
+                  src="/padmanaath-qr-code.png"
+                  alt="Padmanaath Yog QR Code"
+                  width={150}
+                  height={150}
+                  className="rounded"
+                />
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Saturday</span>
-                <span className="text-muted-foreground">8:00 AM - 6:00 PM</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Sunday</span>
-                <span className="text-muted-foreground">9:00 AM - 4:00 PM</span>
-              </div>
-            </div> */}
-            
-            <span className="text-muted-foreground">coming soon</span>
-
+              <p className="text-sm text-center text-muted-foreground">
+                Scan to share the website or
+                <br />
+                contact us directly
+              </p>
+            </div>
           </div>
         </div>
 
