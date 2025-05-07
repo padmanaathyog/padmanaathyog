@@ -43,42 +43,39 @@ export default function Home() {
   const googleFormBookLink = process.env.NEXT_PUBLIC_GOOGLE_FORMS_URL
   return (
     <>
-      {/* Hero Section - REDESIGNED */}
-      <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-x-hidden">
-        <div className="container relative z-10 px-4 py-20 max-w-full">
-          <div className="grid md:grid-cols-2 gap-12 items-center overflow-x-hidden">
+      {/* Hero Section - REDESIGNED with mobile fixes */}
+      <section className="relative min-h-screen flex items-center justify-center pt-20 w-full">
+        <div className="container relative z-10 px-4 py-12 md:py-20 mx-auto">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="text-center md:text-left">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-yoga-burnt">
-                Join us on a journey to balance mind, body, and spirit through the ancient Sanatan practice of yog.
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight text-yoga-burnt">
+                Join us on a journey to balance mind, body, and spirit.
               </h1>
-              <p className="text-2xl md:text-3xl font-semibold mb-4 text-yoga-burnt">
-                Strong Body, Clear Mind, Awakened Soul — One Breath at a Time.
+              <p className="text-xl sm:text-2xl md:text-3xl font-semibold mb-3 md:mb-4 text-yoga-burnt">
+                Strong Body, Clear Mind, Awakened Soul
               </p>
-              <p className="text-xl mb-8 text-muted-foreground">
+              <p className="text-base md:text-xl mb-6 md:mb-8 text-muted-foreground">
                 Join a journey where movement meets mindfulness, and every breath brings balance.
               </p>
-              <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-4">
+              <div className="flex justify-center md:justify-start">
                 <Link
                   href={googleFormBookLink || ""}
                   target="_blank"
                   aria-label="Begin Your Journey with padmanaathyog"
-                  className="w-full sm:w-auto"
                 >
-                  <Button
-                    size="lg"
-                    className="bg-yoga-burnt hover:bg-yoga-lightorange w-full sm:w-auto text-lg px-8 py-6"
-                  >
-                    Begin Your Journey with padmanaathyog
+                  <Button size="lg" className="bg-yoga-burnt hover:bg-yoga-lightorange text-base md:text-lg px-6 py-5">
+                    Begin Your Journey
                   </Button>
                 </Link>
               </div>
             </div>
-            <div className="relative h-80 md:h-[500px] rounded-2xl overflow-hidden">
+            <div className="relative h-64 sm:h-80 md:h-[400px] lg:h-[500px] rounded-xl overflow-hidden">
               <Image
-                src="/sunset-yoga-site.jpeg?height=500&width=800"
+                src="/sunset-yoga-site.png?height=500&width=800"
                 alt="Padmanaath Yog - Serene Natural Environment"
                 fill
                 className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>
           </div>
@@ -225,7 +222,7 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <AnimatedSection direction="left" className="relative h-80 md:h-[500px] rounded-2xl overflow-hidden">
               <Image
-                src="/Padmanaath Yoga Practice.png?height=500&width=800"
+                src="/Padmanaath Yoga Practice.jpeg?height=500&width=800"
                 alt="Padmanaath Yog Practice"
                 fill
                 className="object-cover"
