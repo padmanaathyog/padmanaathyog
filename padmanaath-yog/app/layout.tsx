@@ -77,6 +77,7 @@ export const metadata: Metadata = {
     description: "Discover the authentic practice of Padmanaath Yog, rooted in ancient Sanatan traditions.",
     images: ["/images/twitter-image.jpg"],
   },
+  viewport: "width=device-width, initial-scale=1.0, maximum-scale=1.0",
 }
 
 export default function RootLayout({
@@ -85,7 +86,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-<html lang="en" suppressHydrationWarning className="scroll-smooth">
+    <html lang="en" suppressHydrationWarning className="scroll-smooth">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+      </head>
       <body className={`${roboto.variable} ${lato.variable} ${poppins.variable} font-sans antialiased`}>
         {/* ThemeProvider must be a Client Component */}
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
@@ -99,6 +103,5 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
-
   )
 }

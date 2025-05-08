@@ -22,12 +22,9 @@ const navLinks = [
       { href: "/events", label: "Events" },
       { href: "/padmanaath-yog", label: "Padmanaath Yog" },
       { href: "/yoga-protocol", label: "Yoga-Protocol" },
-
     ],
   },
   { href: "/gallery", label: "Gallery" },
-  
-
   {
     label: "Yog",
     dropdown: true,
@@ -85,15 +82,23 @@ export default function Navbar() {
     }
   }, [activeDropdown])
 
-  // Close dropdown when navigating
+  // Close dropdown and menu when navigating
   useEffect(() => {
     setActiveDropdown(null)
+    setIsMenuOpen(false)
   }, [pathname])
 
+  // Toggle dropdown open/closed
   const toggleDropdown = (e: React.MouseEvent, label: string) => {
     e.preventDefault()
     e.stopPropagation()
     setActiveDropdown(activeDropdown === label ? null : label)
+  }
+
+  // Close mobile menu
+  const closeMenu = () => {
+    setIsMenuOpen(false)
+    setActiveDropdown(null)
   }
 
   function renderNavLink(link: { 
@@ -109,6 +114,7 @@ export default function Navbar() {
           href={link.href}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={closeMenu}
           className={cn(
             "px-3 py-2 text-sm lg:text-base text-gray-700 hover:text-yoga-burnt transition-colors rounded-md",
             pathname === link.href && "text-yoga-burnt"
@@ -122,6 +128,7 @@ export default function Navbar() {
     return (
       <Link
         href={link.href}
+        onClick={closeMenu}
         className={cn(
           "px-3 py-2 text-sm lg:text-base text-gray-700 hover:text-yoga-burnt transition-colors rounded-md",
           pathname === link.href && "text-yoga-burnt"
@@ -131,6 +138,7 @@ export default function Navbar() {
       </Link>
     )
   }
+
   return (
     <header
       className={cn(
@@ -139,7 +147,7 @@ export default function Navbar() {
       )}
     >
       <div className="container mx-auto px-4 flex items-center justify-between h-16 md:h-20">
-        <Link href="/" className="flex items-center">
+        <Link href="/" className="flex items-center" onClick={closeMenu}>
           <Image
             src="/logo-detailed.svg"
             alt="Padmanaath Yog Logo"
@@ -187,7 +195,6 @@ export default function Navbar() {
                         exit={{ opacity: 0, y: -5 }}
                         transition={{ duration: 0.2 }}
                         className="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg py-1 z-50"
-                        onClick={(e) => e.stopPropagation()}
                       >
                         {link.items?.map((item: any) => (
                           <Link
@@ -197,6 +204,7 @@ export default function Navbar() {
                               "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-yoga-burnt",
                               pathname === item.href && "bg-gray-100 text-yoga-burnt",
                             )}
+                            onClick={closeMenu}
                           >
                             {item.label}
                           </Link>
@@ -212,10 +220,12 @@ export default function Navbar() {
           ))}
           <Button asChild className="ml-2 bg-yoga-burnt hover:bg-yoga-lightorange">
             <a
-            href={googleFormBookLink} 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            >Book a Session</a>
+              href={googleFormBookLink} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+            >
+              Book a Session
+            </a>
           </Button>
         </nav>
 
@@ -242,7 +252,7 @@ export default function Navbar() {
                     <>
                       <button
                         onClick={(e) => toggleDropdown(e, link.label)}
-                        className="px-3 py-2 text-base text-gray-700 hover:text-yoga-burnt transition-colors rounded-md flex justify-between items-center"
+                        className="px-3 py-2 text-sm text-gray-700 hover:text-yoga-burnt transition-colors rounded-md flex justify-between items-center"
                         aria-expanded={activeDropdown === link.label}
                       >
                         {link.label}
@@ -264,13 +274,10 @@ export default function Navbar() {
                                 key={item.href}
                                 href={item.href}
                                 className={cn(
-                                  "px-3 py-2 text-base text-gray-700 hover:text-yoga-burnt transition-colors rounded-md",
+                                  "px-3 py-2 text-sm text-gray-700 hover:text-yoga-burnt transition-colors rounded-md",
                                   pathname === item.href && "text-yoga-burnt font-medium",
                                 )}
-                                onClick={() => {
-                                  setIsMenuOpen(false)
-                                  setActiveDropdown(null)
-                                }}
+                                onClick={closeMenu}
                               >
                                 {item.label}
                               </Link>
@@ -281,7 +288,7 @@ export default function Navbar() {
                     </>
                   ) : (
                     <div className="flex items-center">
-                      {link.href ? renderNavLink(link as { href: string; label: string; external?: boolean }) : null}
+                      {link.href && renderNavLink(link as { href: string; label: string; external?: boolean })}
                     </div>
                   )}
                 </div>
@@ -289,13 +296,13 @@ export default function Navbar() {
               <Button
                 asChild
                 className="mt-2 bg-yoga-burnt hover:bg-yoga-lightorange w-full"
-                onClick={() => setIsMenuOpen(false)}
+                onClick={closeMenu}
               >
                 <a
                   href={googleFormBookLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full text-center text-white text-base"
+                  className="w-full text-center text-white text-sm"
                 >
                   Book a Session
                 </a>
@@ -304,7 +311,6 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-      
     </header>
   )
 }
