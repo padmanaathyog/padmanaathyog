@@ -1,3 +1,4 @@
+import HomeClient from "./home-client-copy"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -41,8 +42,9 @@ const faqItems = [
 export default function Home() {
   const googleFormContactLink = process.env.NEXT_PUBLIC_CONTACT_FORM_URL
   const googleFormBookLink = process.env.NEXT_PUBLIC_GOOGLE_FORMS_URL
+
   return (
-    <>
+    <HomeClient>
       {/* Hero Section - REDESIGNED with mobile fixes */}
       <section className="relative min-h-screen flex items-center justify-center pt-20 w-full">
         <div className="container relative z-10 px-4 py-12 md:py-20 mx-auto">
@@ -182,17 +184,16 @@ export default function Home() {
               </div>
 
               <div className="bullet-list space-y-2">
-  <p className="text-muted-foreground">Finding your real self is yog.</p>
-  <p className="text-muted-foreground">Connecting with nature is yog.</p>
-  <p className="text-muted-foreground">Perfect body, mind and spirit wellness is yog.</p>
-  
-  <ul className="list-disc pl-6 space-y-1 text-muted-foreground">
-    <li>Maintaining a fit body and an alert mind is essential for every human being</li>
-    <li>An alert mind can only thrive in a healthy body</li>
-    <li>Therefore, preserving optimal physical fitness is of utmost importance</li>
-  </ul>
-</div>
+                <p className="text-muted-foreground">Finding your real self is yog.</p>
+                <p className="text-muted-foreground">Connecting with nature is yog.</p>
+                <p className="text-muted-foreground">Perfect body, mind and spirit wellness is yog.</p>
 
+                <ul className="list-disc pl-6 space-y-1 text-muted-foreground">
+                  <li>Maintaining a fit body and an alert mind is essential for every human being</li>
+                  <li>An alert mind can only thrive in a healthy body</li>
+                  <li>Therefore, preserving optimal physical fitness is of utmost importance</li>
+                </ul>
+              </div>
 
               <p className="mb-6 font-medium text-yoga-burnt">
                 शरीरमाद्यं खलु धर्मसाधनम् - The body is the medium through which one performs their righteous duties.
@@ -301,12 +302,8 @@ export default function Home() {
 
                 <div>
                   <h4 className="text-lg font-medium mb-3 text-yoga-burnt">Benefits of Learning and Doing it Right</h4>
-                    <p className="mb-2 font-medium text-yoga-burnt text-sm">
-                    प्राणायामेन युक्तेन, सर्वरोगक्षयो भवेत् |
-                    </p>
-                    <p className="mb-2 font-medium text-yoga-burnt text-sm">
-                    अयुक्ताभ्यासयोगेन, सर्वरोगस्य संभवः
-                    </p>
+                  <p className="mb-2 font-medium text-yoga-burnt text-sm">प्राणायामेन युक्तेन, सर्वरोगक्षयो भवेत् |</p>
+                  <p className="mb-2 font-medium text-yoga-burnt text-sm">अयुक्ताभ्यासयोगेन, सर्वरोगस्य संभवः</p>
                   <p className="mb-4 text-sm text-muted-foreground">
                     By practicing Pranayama (breath control) properly, all diseases are destroyed. But by improper
                     practice, all diseases are possible.
@@ -447,6 +444,6 @@ export default function Home() {
           </AnimatedSection>
         </div>
       </section>
-    </>
+    </HomeClient>
   )
 }
