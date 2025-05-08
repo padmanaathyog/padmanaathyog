@@ -478,7 +478,7 @@ export const yogaProtocol = {
     },
     {
       level: "Level 4: Elevating Health",
-      sanskrit: "बलवज्रसंहननत्वान",
+      sanskrit: "बलवज्रसंहननत्वानि",
       description: "Building resilience and strength to face future health challenges",
     },
   ],
