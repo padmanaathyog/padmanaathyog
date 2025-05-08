@@ -35,7 +35,7 @@ export default function InaugurationWelcome() {
     // Set up image rotation
     const interval = setInterval(() => {
       setCurrentImage((prev) => (prev === 0 ? 1 : 0))
-    }, 3000)
+    }, 4000)
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown)
