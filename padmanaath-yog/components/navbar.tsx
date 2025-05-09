@@ -13,7 +13,7 @@ import { usePathname } from "next/navigation"
 
 // Define navigation structure with dropdowns
 const navLinks = [
-  { href: "/", label: "Home" },
+  { href: "/home", label: "Home" },
   {
     label: "About Us",
     dropdown: true,
