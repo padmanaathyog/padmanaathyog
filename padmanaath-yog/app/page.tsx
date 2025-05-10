@@ -17,10 +17,8 @@ export default function InaugurationWelcome() {
   ]
   // Handle keydown event to proceed to main site
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.key === "Enter") {
-        router.push("/home")    
-      setShowWelcome(false)
-    }
+    router.push("/home")    
+    setShowWelcome(false)
   }, [])
 
   // Handle button click for mobile users
