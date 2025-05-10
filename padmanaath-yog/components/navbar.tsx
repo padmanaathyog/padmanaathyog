@@ -28,9 +28,7 @@ const navLinks = [
   {
     label: "Yog",
     dropdown: true,
-    items: [
-      { href: "/therapeutic-yog", label: "Therapeutic Yog" },
-    ],
+    items: [{ href: "/therapeutic-yog", label: "Therapeutic Yog" }],
   },
   { href: "/the-learned", label: "The Learned" },
   {
@@ -69,16 +67,25 @@ export default function Navbar() {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (activeDropdown) {
-        const currentRef = dropdownRefs.current[activeDropdown]
-        if (currentRef && !currentRef.contains(event.target as Node)) {
+        const target = event.target as Node
+        const dropdownElements = document.querySelectorAll('[aria-expanded="true"]')
+        let clickedInsideDropdown = false
+
+        dropdownElements.forEach((element) => {
+          if (element.contains(target)) {
+            clickedInsideDropdown = true
+          }
+        })
+
+        if (!clickedInsideDropdown) {
           setActiveDropdown(null)
         }
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside)
+    document.addEventListener("click", handleClickOutside)
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
+      document.removeEventListener("click", handleClickOutside)
     }
   }, [activeDropdown])
 
@@ -101,12 +108,12 @@ export default function Navbar() {
     setActiveDropdown(null)
   }
 
-  function renderNavLink(link: { 
-    href: string; 
-    label: string; 
-    dropdown?: undefined; 
-    items?: undefined; 
-    external?: boolean 
+  function renderNavLink(link: {
+    href: string
+    label: string
+    dropdown?: undefined
+    items?: undefined
+    external?: boolean
   }): React.ReactNode {
     if (link.external) {
       return (
@@ -117,7 +124,7 @@ export default function Navbar() {
           onClick={closeMenu}
           className={cn(
             "px-3 py-2 text-sm lg:text-base text-gray-700 hover:text-yoga-burnt transition-colors rounded-md",
-            pathname === link.href && "text-yoga-burnt"
+            pathname === link.href && "text-yoga-burnt",
           )}
         >
           {link.label}
@@ -131,7 +138,7 @@ export default function Navbar() {
         onClick={closeMenu}
         className={cn(
           "px-3 py-2 text-sm lg:text-base text-gray-700 hover:text-yoga-burnt transition-colors rounded-md",
-          pathname === link.href && "text-yoga-burnt"
+          pathname === link.href && "text-yoga-burnt",
         )}
       >
         {link.label}
@@ -213,17 +220,13 @@ export default function Navbar() {
                     )}
                   </AnimatePresence>
                 </>
-              ) : (
-                link.href ? renderNavLink(link) : null
-              )}
+              ) : link.href ? (
+                renderNavLink(link)
+              ) : null}
             </div>
           ))}
           <Button asChild className="ml-2 bg-yoga-burnt hover:bg-yoga-lightorange">
-            <a
-              href={googleFormBookLink} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-            >
+            <a href={googleFormBookLink} target="_blank" rel="noopener noreferrer">
               Book a Session
             </a>
           </Button>
@@ -252,7 +255,7 @@ export default function Navbar() {
                     <>
                       <button
                         onClick={(e) => toggleDropdown(e, link.label)}
-                        className="px-3 py-2 text-sm text-gray-700 hover:text-yoga-burnt transition-colors rounded-md flex justify-between items-center"
+                        className="px-3 py-2 text-sm text-gray-700 hover:text-yoga-burnt transition-colors rounded-md flex justify-between items-center w-full"
                         aria-expanded={activeDropdown === link.label}
                       >
                         {link.label}
@@ -293,11 +296,7 @@ export default function Navbar() {
                   )}
                 </div>
               ))}
-              <Button
-                asChild
-                className="mt-2 bg-yoga-burnt hover:bg-yoga-lightorange w-full"
-                onClick={closeMenu}
-              >
+              <Button asChild className="mt-2 bg-yoga-burnt hover:bg-yoga-lightorange w-full" onClick={closeMenu}>
                 <a
                   href={googleFormBookLink}
                   target="_blank"
