@@ -1,0 +1,16 @@
+{
+    "redirects": [
+      {
+        "source": "/:path*",
+        "has": [
+          {
+            "type": "host",
+            "value": "padmanaathyog.com"
+          }
+        ],
+        "destination": "https://www.padmanaathyog.com/:path*",
+        "permanent": true
+      }
+    ]
+  }
+  
