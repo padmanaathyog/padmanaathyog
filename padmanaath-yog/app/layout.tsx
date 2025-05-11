@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import ContentProtection from "@/components/content-protection"
 // Add the EventPopup import
 import EventPopup from "@/components/event-popup"
+import { Analytics } from '@vercel/analytics/next';
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -96,7 +97,10 @@ export default function RootLayout({
           <ContentProtection />
           <div className="flex min-h-screen flex-col">
             <Navbar />
-            <main className="flex-1">{children}</main>
+            <main className="flex-1">{children}
+            <Analytics />
+
+            </main>
             <Footer />
           </div>
           <EventPopup />
