@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Mail, MapPin } from "lucide-react";
+import Image from "next/image";
 
 export default function Footer() {
   const googleFormContactLink = process.env.NEXT_PUBLIC_CONTACT_FORM_URL;
@@ -22,18 +23,15 @@ export default function Footer() {
               ancient Sanatan practice of yog in a serene, natural environment.
             </p>
             <div className="flex items-center space-x-2 mt-4 text-sm text-muted-foreground">
-  <span className="font-medium">
-    Our Associates · Location:
-  </span>
-  <Link
-    href="https://ekaant.in/"
-    target="_blank"
-    className="text-yoga-burnt hover:text-yoga-brown transition-colors underline underline-offset-2"
-  >
-    Ekaant.in
-  </Link>
-</div>
-
+              <span className="font-medium">Our Associates · Location:</span>
+              <Link
+                href="https://ekaant.in/"
+                target="_blank"
+                className="text-yoga-burnt hover:text-yoga-brown transition-colors underline underline-offset-2"
+              >
+                Ekaant.in
+              </Link>
+            </div>
           </div>
 
           {/* Quick Links */}
@@ -112,25 +110,27 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Session Hours */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Session Hours</h3>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Monday - Friday</span>
-                <span className="text-muted-foreground">6:00 AM - 9:00 PM</span>
+          {/* QR Code Section */}
+            <div className="flex flex-col items-start">
+              <h3 className="text-lg font-semibold mb-4">
+              Connect With Us
+              </h3>
+              <div className="bg-white p-2 rounded-lg shadow-md">
+              <Image
+                src="/padmanaath-qr-code.png"
+                alt="Padmanaath Yog QR Code"
+                width={150}
+                height={150}
+                className="rounded"
+              />
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Saturday</span>
-                <span className="text-muted-foreground">8:00 AM - 6:00 PM</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Sunday</span>
-                <span className="text-muted-foreground">9:00 AM - 4:00 PM</span>
-              </div>
+              <p className="text-sm text-muted-foreground mt-4">
+              Scan to share the website or
+              <br />
+              contact us directly
+              </p>
             </div>
-          </div>
-        </div>
+
 
         <div className="border-t border-yoga-burnt/20 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-muted-foreground">
@@ -146,6 +146,7 @@ export default function Footer() {
             </Link>
           </div>
         </div>
+      </div>
       </div>
     </footer>
   );
