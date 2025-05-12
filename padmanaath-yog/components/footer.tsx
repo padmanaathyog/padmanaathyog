@@ -17,7 +17,6 @@ export default function Footer() {
             >
               Padmanaath<span className="text-yoga-brown">Yog</span>
             </Link>
-
             <p className="text-muted-foreground max-w-xs">
               Join us on a journey to balance mind, body, and spirit through the
               ancient Sanatan practice of yog in a serene, natural environment.
@@ -111,11 +110,9 @@ export default function Footer() {
           </div>
 
           {/* QR Code Section */}
-            <div className="flex flex-col items-start">
-              <h3 className="text-lg font-semibold mb-4">
-              Connect With Us
-              </h3>
-              <div className="bg-white p-2 rounded-lg shadow-md">
+          <div className="flex flex-col items-start">
+            <h3 className="text-lg font-semibold mb-4">Connect With Us</h3>
+            <div className="bg-white p-2 rounded-lg shadow-md">
               <Image
                 src="/padmanaath-qr-code.png"
                 alt="Padmanaath Yog QR Code"
@@ -123,15 +120,16 @@ export default function Footer() {
                 height={150}
                 className="rounded"
               />
-              </div>
-              <p className="text-sm text-muted-foreground mt-4">
+            </div>
+            <p className="text-sm text-muted-foreground mt-4">
               Scan to share the website or
               <br />
               contact us directly
-              </p>
-            </div>
+            </p>
+          </div>
+        </div>
 
-
+        {/* Bottom Bar */}
         <div className="border-t border-yoga-burnt/20 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-muted-foreground">
             &copy; {new Date().getFullYear()} Padmanaath Yog. All rights
@@ -146,7 +144,6 @@ export default function Footer() {
             </Link>
           </div>
         </div>
-      </div>
       </div>
     </footer>
   );
