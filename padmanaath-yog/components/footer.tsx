@@ -95,7 +95,7 @@ export default function Footer() {
                     Commercial Complex, Bibvewadi, Pune – 411037
                   </p>
                   <p>
-                    <strong>Konkan Address:</strong> Ekant Forest Homes, Jamsut,
+                    <strong>Konkan Address:</strong> Ekaant Forest Homes, Jamsut,
                     Tq: Guhaghar, Dist: Ratnagiri, Maharashtra – 415703
                   </p>
                 </div>
