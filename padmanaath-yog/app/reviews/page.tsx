@@ -102,7 +102,7 @@ export default function ReviewsPage() {
     <div className="page-padding">
       <div className="container">
         <SectionHeader
-          title="Student Reviews & Testimonials"
+            title="Reviews & Testimonials"
           subtitle="Discover what our community has to say about their experiences with Padmanaath Yoga."
         />
 
