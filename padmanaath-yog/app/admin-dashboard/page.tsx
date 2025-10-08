@@ -12,14 +12,17 @@ import { AuthService } from "@/lib/services/auth-service"
 import { TestimonialService, type Testimonial } from "@/lib/services/testimonial-service"
 import { GalleryService, type GalleryImage, type GalleryVideo } from "@/lib/services/gallery-service"
 import { EventService, type Event } from "@/lib/services/event-service"
+import { BlogService, type BlogExternalRef } from "@/lib/services/blog-service"
 
 // Import components
 import LoginForm from "@/components/admin/login-form"
 import TestimonialsTab from "@/components/admin/testimonials-tab"
 import GalleryTab from "@/components/admin/gallery-tab"
 import EventsTab from "@/components/admin/events-tab"
+import BlogsTab from "@/components/admin/blogs-tab"
 import TestimonialModal from "@/components/admin/testimonial-modal"
 import EventModal from "@/components/admin/event-modal"
+import BlogModal from "@/components/admin/blog-modal"
 import DeleteModal from "@/components/admin/delete-modal"
 import GalleryImageModal from "@/components/admin/gallery-image-modal"
 import GalleryVideoModal from "@/components/admin/gallery-video-modal"
@@ -39,6 +42,7 @@ export default function AdminDashboard() {
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([])
   const [galleryVideos, setGalleryVideos] = useState<GalleryVideo[]>([])
   const [events, setEvents] = useState<Event[]>([])
+  const [blogs, setBlogs] = useState<BlogExternalRef[]>([])
   const [imageCategories, setImageCategories] = useState<string[]>([])
   const [videoCategories, setVideoCategories] = useState<string[]>([])
 
@@ -48,6 +52,7 @@ export default function AdminDashboard() {
   // Modal states
   const [testimonialModalOpen, setTestimonialModalOpen] = useState(false)
   const [eventModalOpen, setEventModalOpen] = useState(false)
+  const [blogModalOpen, setBlogModalOpen] = useState(false)
   const [galleryImageModalOpen, setGalleryImageModalOpen] = useState(false)
   const [galleryVideoModalOpen, setGalleryVideoModalOpen] = useState(false)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
@@ -116,6 +121,10 @@ export default function AdminDashboard() {
           const eventResult = await EventService.getAll()
           setEvents(eventResult?.data || [])
           break
+        case "blogs":
+          const blogResult = await BlogService.getAll()
+          setBlogs(blogResult?.data || [])
+          break
       }
     } catch (error) {
       console.error(`Error loading ${activeTab} data:`, error)
@@ -176,6 +185,12 @@ export default function AdminDashboard() {
     setGalleryVideoModalOpen(true)
   }
 
+  const openBlogModal = (blog: BlogExternalRef | null = null) => {
+    setCurrentItem(blog)
+    setEditingItemId(blog?.id || null)
+    setBlogModalOpen(true)
+  }
+
   const openDeleteModal = (item: any) => {
     setCurrentItem(item)
     setDeleteModalOpen(true)
@@ -205,6 +220,9 @@ export default function AdminDashboard() {
           break
         case "events":
           success = await EventService.delete(currentItem.id)
+          break
+        case "blogs":
+          success = await BlogService.delete(currentItem.id)
           break
       }
 
@@ -288,6 +306,9 @@ export default function AdminDashboard() {
             <TabsTrigger value="events" className="flex-1 min-w-[100px]">
               Events
             </TabsTrigger>
+            <TabsTrigger value="blogs" className="flex-1 min-w-[100px]">
+              Blogs
+            </TabsTrigger>
           </TabsList>
 
           {/* Action Buttons - Removed search bar */}
@@ -318,6 +339,9 @@ export default function AdminDashboard() {
                         break
                       case "events":
                         openEventModal()
+                        break
+                      case "blogs":
+                        openBlogModal()
                         break
                     }
                   }}
@@ -369,6 +393,18 @@ export default function AdminDashboard() {
               editingItemId={editingItemId}
             />
           </TabsContent>
+
+          {/* Blogs Tab */}
+          <TabsContent value="blogs" className="space-y-6">
+            <BlogsTab
+              blogs={blogs}
+              isLoading={isLoading}
+              searchTerm=""
+              onEdit={openBlogModal}
+              onDelete={openDeleteModal}
+              editingItemId={editingItemId}
+            />
+          </TabsContent>
         </Tabs>
       </main>
 
@@ -398,6 +434,16 @@ export default function AdminDashboard() {
           setEditingItemId(null)
         }}
         event={currentItem}
+        onSuccess={loadData}
+      />
+
+      <BlogModal
+        isOpen={blogModalOpen}
+        onClose={() => {
+          setBlogModalOpen(false)
+          setEditingItemId(null)
+        }}
+        blog={currentItem}
         onSuccess={loadData}
       />
 
