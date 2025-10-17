@@ -19,6 +19,7 @@ interface BlogModalProps {
 
 export default function BlogModal({ isOpen, onClose, blog, onSuccess }: BlogModalProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const [isFetchingMetadata, setIsFetchingMetadata] = useState(false)
   const [formData, setFormData] = useState({
     external_id: "",
     title: "",
@@ -77,7 +78,9 @@ export default function BlogModal({ isOpen, onClose, blog, onSuccess }: BlogModa
     }))
   }
 
-  const extractDataFromUrl = (url: string) => {
+  const extractDataFromUrl = async (url: string) => {
+    if (!url.trim()) return
+
     try {
       const urlObj = new URL(url)
       const hostname = urlObj.hostname.toLowerCase()
@@ -94,15 +97,66 @@ export default function BlogModal({ isOpen, onClose, blog, onSuccess }: BlogModa
         provider = "wordpress"
       }
 
-      // Extract external_id from URL path
-      const pathParts = urlObj.pathname.split('/').filter(part => part.length > 0)
-      const external_id = pathParts[pathParts.length - 1] || url
+      // Use the full URL as external_id so it can be opened directly
+      const external_id = url
 
+      // First, set the basic extracted data
       setFormData(prev => ({
         ...prev,
         external_id,
         provider
       }))
+
+      // If it's a valid HTTP URL, try to fetch metadata
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        setIsFetchingMetadata(true)
+        
+        try {
+          const response = await fetch('/api/extract-blog-metadata', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ url }),
+          })
+
+          if (response.ok) {
+            const metadata = await response.json()
+            
+            setFormData(prev => ({
+              ...prev,
+              external_id: url, // Keep full URL
+              provider,
+              title: metadata.title || prev.title,
+              excerpt: metadata.excerpt || prev.excerpt,
+              image: metadata.image || prev.image,
+              author: metadata.author || prev.author,
+              date: metadata.date || prev.date,
+              tags: metadata.tags?.join(', ') || prev.tags,
+              slug: prev.slug || generateSlug(metadata.title || '')
+            }))
+
+            toast({
+              title: "Success",
+              description: "Blog metadata extracted successfully!",
+            })
+          } else {
+            console.error('Failed to fetch metadata')
+            toast({
+              title: "Partial Success",
+              description: "Provider detected, but couldn't auto-fill all fields. Please fill manually.",
+            })
+          }
+        } catch (error) {
+          console.error('Error fetching metadata:', error)
+          toast({
+            title: "Partial Success",
+            description: "Provider detected, but couldn't auto-fill all fields. Please fill manually.",
+          })
+        } finally {
+          setIsFetchingMetadata(false)
+        }
+      }
     } catch (error) {
       // Invalid URL, just use as external_id
       setFormData(prev => ({
@@ -180,31 +234,49 @@ export default function BlogModal({ isOpen, onClose, blog, onSuccess }: BlogModa
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="external_id">External URL/ID</Label>
-              <Input
-                id="external_id"
-                value={formData.external_id}
-                onChange={(e) => extractDataFromUrl(e.target.value)}
-                placeholder="https://example.com/blog-post or unique-id"
-              />
+              <Label htmlFor="external_id">Blog URL (paste to auto-extract)</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="external_id"
+                  value={formData.external_id}
+                  onChange={(e) => setFormData(prev => ({ ...prev, external_id: e.target.value }))}
+                  onBlur={(e) => extractDataFromUrl(e.target.value)}
+                  placeholder="https://medium.com/@user/article-title-123abc"
+                  disabled={isFetchingMetadata}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => extractDataFromUrl(formData.external_id)}
+                  disabled={isFetchingMetadata || !formData.external_id}
+                >
+                  {isFetchingMetadata ? "Extracting..." : "Extract"}
+                </Button>
+              </div>
+              {isFetchingMetadata && (
+                <p className="text-sm text-gray-500 flex items-center gap-2">
+                  <span className="animate-spin">⏳</span> Fetching blog metadata...
+                </p>
+              )}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="provider">Provider</Label>
-              <Select value={formData.provider} onValueChange={(value) => setFormData(prev => ({ ...prev, provider: value }))}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="external">External</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="dev.to">Dev.to</SelectItem>
-                  <SelectItem value="hashnode">Hashnode</SelectItem>
-                  <SelectItem value="wordpress">WordPress</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="provider">Provider (auto-detected)</Label>
+            <Select value={formData.provider} onValueChange={(value) => setFormData(prev => ({ ...prev, provider: value }))}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="external">External</SelectItem>
+                <SelectItem value="medium">Medium</SelectItem>
+                <SelectItem value="dev.to">Dev.to</SelectItem>
+                <SelectItem value="hashnode">Hashnode</SelectItem>
+                <SelectItem value="wordpress">WordPress</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">

@@ -49,7 +49,7 @@ create table public.gallery_images (
   updated_at timestamp with time zone default now() not null,
   title text not null,
   description text not null,
-  src text not null,
+  url text not null,
   category text not null
 );
 \`\`\`
@@ -62,7 +62,7 @@ create table public.gallery_videos (
   updated_at timestamp with time zone default now() not null,
   title text not null,
   description text not null,
-  src text not null,
+  url text not null,
   thumbnail text not null,
   duration text not null,
   category text not null
@@ -100,7 +100,8 @@ create table public.blog_external_refs (
   author text not null,
   date text not null,
   slug text not null unique,
-  provider text not null
+  provider text not null,
+  tags text[] default '{}'
 );
 \`\`\`
 
@@ -169,8 +170,15 @@ The blog functionality is prepared for future integration with an external provi
 
 The application requires the following environment variables to function correctly:
 
+**Required:**
 - `NEXT_PUBLIC_SUPABASE_URL`: Your Supabase project URL
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Your Supabase anonymous key
+- `SUPABASE_SERVICE_ROLE_KEY`: Your Supabase service role key (for admin operations)
+
+**Optional:**
+- `NEXT_PUBLIC_STORAGE_BUCKET`: Storage bucket name (defaults to "yoga-images")
+- `NEXT_PUBLIC_CONTACT_FORM_URL`: Google Forms contact link
+- `NEXT_PUBLIC_GOOGLE_FORMS_URL`: Google Forms booking link
 
 These variables can be added directly to your `.env.local` file for local development, or to your deployment platform's environment variables for production.
 
