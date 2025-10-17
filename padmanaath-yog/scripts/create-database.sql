@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS gallery_images (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   title TEXT NOT NULL,
   description TEXT NOT NULL,
-  src TEXT NOT NULL,
+  url TEXT NOT NULL,
   category TEXT NOT NULL
 );
 
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS gallery_videos (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   title TEXT NOT NULL,
   description TEXT NOT NULL,
-  src TEXT NOT NULL,
+  url TEXT NOT NULL,
   thumbnail TEXT NOT NULL,
   duration TEXT NOT NULL,
   category TEXT NOT NULL
@@ -78,7 +78,8 @@ CREATE TABLE IF NOT EXISTS blog_external_refs (
   author TEXT NOT NULL,
   date TEXT NOT NULL,
   slug TEXT NOT NULL UNIQUE,
-  provider TEXT NOT NULL
+  provider TEXT NOT NULL,
+  tags TEXT[] DEFAULT '{}'
 );
 
 -- Create storage bucket for uploads

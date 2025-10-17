@@ -11,9 +11,24 @@ interface BlogCardProps {
   author: string
   slug: string
   tags: string[]
+  provider?: string
+  external_id?: string
 }
 
-export default function BlogCard({ id, title, excerpt, image, date, author, slug, tags }: BlogCardProps) {
+export default function BlogCard({ 
+  id, 
+  title, 
+  excerpt, 
+  image, 
+  date, 
+  author, 
+  slug, 
+  tags, 
+  provider = "external",
+  external_id 
+}: BlogCardProps) {
+  const isExternalLink = external_id?.startsWith('http')
+  const blogUrl = isExternalLink ? external_id! : `/blog/${slug}`
   return (
     <article className="glass-card group overflow-hidden">
       <div className="relative h-52 w-full">
@@ -33,7 +48,11 @@ export default function BlogCard({ id, title, excerpt, image, date, author, slug
         </div>
 
         <h3 className="text-xl font-semibold mb-2 group-hover:text-yoga-orange transition-colors">
-          <Link href={`/blog/${slug}`}>{title}</Link>
+          {isExternalLink ? (
+            <a href={blogUrl} target="_blank" rel="noopener noreferrer">{title}</a>
+          ) : (
+            <Link href={blogUrl}>{title}</Link>
+          )}
         </h3>
 
         <p className="text-muted-foreground mb-4 line-clamp-2">{excerpt}</p>
@@ -46,21 +65,41 @@ export default function BlogCard({ id, title, excerpt, image, date, author, slug
           ))}
         </div>
 
-        <Link
-          href={`/blog/${slug}`}
-          className="inline-flex items-center mt-4 text-yoga-orange hover:text-yoga-ochre transition-colors text-sm font-medium"
-        >
-          Read more
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 ml-1"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+        {isExternalLink ? (
+          <a
+            href={blogUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center mt-4 text-yoga-orange hover:text-yoga-ochre transition-colors text-sm font-medium"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </Link>
+            Read more
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4 ml-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        ) : (
+          <Link
+            href={blogUrl}
+            className="inline-flex items-center mt-4 text-yoga-orange hover:text-yoga-ochre transition-colors text-sm font-medium"
+          >
+            Read more
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4 ml-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        )}
       </div>
     </article>
   )

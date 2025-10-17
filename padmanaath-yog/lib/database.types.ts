@@ -199,6 +199,7 @@ export interface Database {
           date: string
           slug: string
           provider: string
+          tags: string[]
         }
         Insert: {
           id?: number
@@ -212,6 +213,7 @@ export interface Database {
           date: string
           slug: string
           provider: string
+          tags?: string[]
         }
         Update: {
           id?: number
@@ -225,6 +227,7 @@ export interface Database {
           date?: string
           slug?: string
           provider?: string
+          tags?: string[]
         }
         Relationships: []
       }
