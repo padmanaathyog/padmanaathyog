@@ -11,6 +11,8 @@
         "destination": "https://www.padmanaathyog.com/:path*",
         "permanent": true
       }
-    ]
+    ],
+    "buildCommand": "npm run build",
+    "installCommand": "npm install"
   }
   
