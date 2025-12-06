@@ -68,11 +68,26 @@ export const BlogService = {
 
   async create(blog: BlogExternalRefInsert): Promise<BlogExternalRef | null> {
     try {
+      // Ensure slug is unique
+      let slug = blog.slug || ""
+      let counter = 1
+      const baseSlug = slug
+
+      while (slug) {
+        const existing = await this.getBySlug(slug)
+        if (!existing) {
+          break
+        }
+        slug = `${baseSlug}-${counter}`
+        counter++
+      }
+
       const { data, error } = await supabase
         .from("blog_external_refs")
         .insert([
           {
             ...blog,
+            slug,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           },
